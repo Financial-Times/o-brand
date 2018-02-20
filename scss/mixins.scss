@@ -8,6 +8,7 @@ $_o-table-default-brand-is-configured: false !default;
 /**
 * Define configuration for a brand.
 *
+* @access public
 * @param {string} $brand
 * @param {map} $config
 **/
@@ -58,6 +59,7 @@ $_o-table-default-brand-is-configured: false !default;
 *     @oBrandGet('example-border-size', 'example-border-style', 'example-border-color'); // 1px solid red
 *     @oBrandGet('inverse-stripe-color'); // black
 *
+* @access public
 * @param {arglist} $variables
 * @return {string | number | color | null}
 **/
@@ -77,8 +79,82 @@ $_o-table-default-brand-is-configured: false !default;
 }
 
 /**
+* Configures a content block for a brand variant.
+* A single variant (string) or compound variant (list) is accepted.
+* This mixin may also be nested to target compound variants.
+* The content block will only be output in the brand supports the variant.
+* Calls for brand variables within will return the value for the configured variant.
+*
+* @example
+*     _oBrandConfigureFor('inverse') {
+*        // Will use configuration for the 'inverse' variant when getting variable values.
+*        // This will not be output if the brand does not support the "inverse" variant.
+*       _oBrandConfigureFor('b2b') {
+*            // Will use configuration for the compound variant 'inverse,b2b' when fetching variable values.
+*       }
+*     }
+*
+* @example
+*     _oBrandConfigureFor(('inverse', 'b2b')) {
+*        // Will use configuration for the compound variant 'inverse,b2b' when fetching variable values.
+*     }
+*
+* @access public
+* @param {string | list} $variant
+**/
+@mixin oBrandConfigureFor($variant) {
+    // Validate variant.
+    @if type-of($variant) != 'list' and type-of($variant) != 'string' {
+        @error 'Cound not configure for variant #{type-of($variant)} "#{$variant}", expecting a list or string.';
+    }
+    // Add to current variant to output variant content.
+    @include _oBrandAddToCurrentVariant($variant);
+    @if oBrandSupports($variant) { // @todo should this variant check be against the whole current variant?
+        @content;
+    }
+    // Variant content output. Remove from the current variant so future CSS is not effected.
+    @include _oBrandRemoveFromCurrentVariant($variant);
+}
+
+/**
+* Check the brand's configured settings to see if it supports a variant.
+* Using this function and a conditional may make sense if there is no variant specific configuration.
+* However `oBrandConfigureFor` should be used instead where possible.
+* Doing so will support variant specific configuration in the future without code changes.
+*
+* @see oBrandConfigureFor
+* @access private
+* @param {string | list} $variant
+* @return {boolean}
+**/
+@function _oBrandSupports($variant) {
+    // Validate variant.
+    @if type-of($variant) != 'list' and type-of($variant) != 'string' {
+        @error 'Cound not check support for variant #{type-of($variant)} "#{$variant}", expecting a list or string.';
+    }
+    // Get all brand settings, which are used to indicate variant support.
+    $brand-config: _oBrandGetConfig($o-table-brand);
+    $brand-settings: map-get($brand-config, 'settings');
+    // No settings are enabled so no variants are supported.
+    @if type-of($brand-settings) != 'map' {
+        @return false;
+    }
+    // Check for a setting name which matches the variant.
+    // Each part of a compound variant should be specified with its own setting.
+    // E.g. Variant ('stripe', 'compact') is enabled with both 'stripe' and 'compact' settings set to true.
+    @each $variant-part in $variant {
+        $setting-defined: type-of($brand-settings) == 'map' and map-has-key($brand-settings, $variant-part);
+        @if $setting-defined == false or map-get($brand-settings, $variant-part) == false {
+            @return false;
+        }
+    }
+    @return true;
+}
+
+/**
 * Gets a variable for the current brand and variant.
 *
+* @access private
 * @param {string} $variable
 * @return {string | number | color | null}
 **/
@@ -113,46 +189,10 @@ $_o-table-default-brand-is-configured: false !default;
 }
 
 /**
-* Configures a content block for a brand variant.
-* A single variant (string) or compound variant (list) is accepted.
-* This mixin may also be nested to target compound variants.
-* The content block will only be output in the brand supports the variant.
-* Calls for brand variables within will return the value for the configured variant.
-*
-* @example
-*     _oBrandConfigureFor('inverse') {
-*        // Will use configuration for the 'inverse' variant when getting variable values.
-*        // This will not be output if the brand does not support the "inverse" variant.
-*       _oBrandConfigureFor('b2b') {
-*            // Will use configuration for the compound variant 'inverse,b2b' when fetching variable values.
-*       }
-*     }
-*
-* @example
-*     _oBrandConfigureFor(('inverse', 'b2b')) {
-*        // Will use configuration for the compound variant 'inverse,b2b' when fetching variable values.
-*     }
-*
-* @param {string | list} $variant
-**/
-@mixin _oBrandConfigureFor($variant) {
-    // Validate variant.
-    @if type-of($variant) != 'list' and type-of($variant) != 'string' {
-        @error 'Cound not configure for variant #{type-of($variant)} "#{$variant}", expecting a list or string.';
-    }
-    // Add to current variant to output variant content.
-    @include _oBrandAddToCurrentVariant($variant);
-    @if _oBrandSupports($variant) { // @todo should this variant check be against the whole current variant?
-        @content;
-    }
-    // Variant content output. Remove from the current variant so future CSS is not effected.
-    @include _oBrandRemoveFromCurrentVariant($variant);
-}
-
-/**
 * Update the current variant to with a new variant.
 * If a variant is already set they are compounded.
 *
+* @access private
 * @param {string | list} $variant
 **/
 @mixin _oBrandAddToCurrentVariant($variant) {
@@ -167,6 +207,7 @@ $_o-table-default-brand-is-configured: false !default;
 /**
 * Update the current variant by removing a variant.
 *
+* @access private
 * @param {string | list} $variant
 **/
 @mixin _oBrandRemoveFromCurrentVariant($variant) {
@@ -184,38 +225,9 @@ $_o-table-default-brand-is-configured: false !default;
 }
 
 /**
-* Check the brand's configured settings to see if it supports a variant.
-*
-* @param {string | list} $variant
-* @return {boolean}
-**/
-@function _oBrandSupports($variant) {
-    // Validate variant.
-    @if type-of($variant) != 'list' and type-of($variant) != 'string' {
-        @error 'Cound not check support for variant #{type-of($variant)} "#{$variant}", expecting a list or string.';
-    }
-    // Get all brand settings, which are used to indicate variant support.
-    $brand-config: _oBrandGetConfig($o-table-brand);
-    $brand-settings: map-get($brand-config, 'settings');
-    // No settings are enabled so no variants are supported.
-    @if type-of($brand-settings) != 'map' {
-        @return false;
-    }
-    // Check for a setting name which matches the variant.
-    // Each part of a compound variant should be specified with its own setting.
-    // E.g. Variant ('stripe', 'compact') is enabled with both 'stripe' and 'compact' settings set to true.
-    @each $variant-part in $variant {
-        $setting-defined: type-of($brand-settings) == 'map' and map-has-key($brand-settings, $variant-part);
-        @if $setting-defined == false or map-get($brand-settings, $variant-part) == false {
-            @return false;
-        }
-    }
-    @return true;
-}
-
-/**
 * Get all config for a given brand.
 *
+* @access private
 * @param {string} $brand
 * @return {map}
 **/
@@ -238,6 +250,7 @@ $_o-table-default-brand-is-configured: false !default;
 /**
 * Quick sort alphanumeric list.
 *
+* @access private
 * @param {list} $list The list to sort.
 * @return {list}
 **/
@@ -251,9 +264,9 @@ $_o-table-default-brand-is-configured: false !default;
         @each $item in $list {
             @if $item == $seed {
                 $equal: append($equal, $item);
-            } @else if _oTableStringCompare($item, $seed) {
+            } @else if _oBrandStringCompare($item, $seed) {
                 $less: append($less, $item);
-            } @else if not _oTableStringCompare($item, $seed) {
+            } @else if not _oBrandStringCompare($item, $seed) {
                 $large: append($large, $item);
             }
         }
@@ -267,14 +280,15 @@ $_o-table-default-brand-is-configured: false !default;
 * Compares two strings to determine which comes first.
 * Sort order defined in an alphanumeric list.
 *
+* @access private
 * @param {string} $string-a
 * @param {string} $string-b
 * @return {list}
 **/
-@function _oTableStringCompare($string-a, $string-b) {
+@function _oBrandStringCompare($string-a, $string-b) {
     // sass-lint:disable variable-name-format
     $character-order: ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
-    @if $string-a {
+    @if type-of($string-a) == 'number' and type-of($string-b) == 'number' {
         @return $string-a < $string-b;
     }
 
@@ -286,7 +300,7 @@ $_o-table-default-brand-is-configured: false !default;
         $character-b: str-slice($string-b, $i, $i);
 
         @if $character-a and $character-b and index($character-order, $character-a) != index($character-order, $character-b) {
-            @return index($character-order, $char-a) < index($character-order, $character-b);
+            @return index($character-order, $character-a) < index($character-order, $character-b);
         }
     }
 
