@@ -1,9 +1,8 @@
-$o-brand: null !default; // The chosen brand.
-$_o-brand-default: 'masterbrand'; // The fallback brand if o-brand is not set.
-$_o-brands: () !default;
-
-$_o-brand-depth: () !default;
-$_o-brand-variant: () !default;
+$o-brand: null !default; // The chosen current brand.
+$_o-brand-default: 'masterbrand'; // The fallback current brand. Allows us to check if o-brand is set explicitly.
+$_o-brands: () !default; // A map of components to their defined brands.
+$_o-brand-variant: () !default; // Current variant by component.
+$_o-brand-depth: () !default; // The number of current variant parts by component.
 
 /**
 * Define component configuration for a brand.
@@ -229,9 +228,9 @@ $_o-brand-variant: () !default;
     $current-variant: _oBrandGetCurrentVariant($component);
     $current-depth: _oBrandGetCurrentDepth($component);
     @if $current-depth == 0 {
-        $current-variant: if(type-of($variant) == 'list', $variant, ($variant)) !global;
+        $current-variant: $variant;
     } @else {
-        $current-variant: join($current-variant, $variant, 'comma') !global;
+        $current-variant: join($current-variant, $variant, 'comma');
     }
     // Update current variant.
     $current-variant: _oBrandSetCurrentVariant($component, $current-variant);
@@ -351,11 +350,13 @@ $_o-brand-variant: () !default;
 *
 * @access private
 * @param {string} $component
-* @return {list}
+* @return {list | string}
 **/
 @function _oBrandGetCurrentVariant($component) {
     $current-variant: map-get($_o-brand-variant, $component);
-    @return if(type-of($current-variant) == 'map', $current-variant, ());
+    // If one variant part return string consistently.
+    $current-variant: if(length($current-variant) == 1, nth($current-variant, 1), $current-variant);
+    @return $current-variant;
 }
 
 /**
@@ -366,9 +367,9 @@ $_o-brand-variant: () !default;
 * @param {string | list} $current-variant
 * @return {list}
 **/
-@function _oBrandSetCurrentVariant($component, $curent-variant) {
-    $_o-brand-variant: map-merge($_o-brand-variant, ($component: $curent-variant)) !global;
-    @return $curent-variant;
+@function _oBrandSetCurrentVariant($component, $current-variant) {
+    $_o-brand-variant: map-merge($_o-brand-variant, ($component: $current-variant)) !global;
+    @return $current-variant;
 }
 
 /**
