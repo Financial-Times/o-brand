@@ -57,48 +57,6 @@ $_o-brand-depth: () !default; // The number of current variant parts by componen
 }
 
 /**
-* Check the default brand is configured. Otherwise using o-brand is not allowed.
-* The default brand must be configured by the component as it is the fallback.
-*
-* @access private
-* @param {string} $component
-* @return {boolean}
-**/
-@function _oBrandIsDefaultConfigured($component) {
-    $component-brands: map-get($_o-brands, $component);
-    $component-brands: if(type-of($component-brands) == 'map', $component-brands, ());
-    @return type-of(map-get($component-brands, $_o-brand-default)) == 'map';
-}
-
-/**
-* Gets a variable for the current brand and configured for variant.
-* If multiple variables are requested they are concatenated for use as one property.
-*
-* @example
-*     @oBrandGet('example-border-size', 'example-border-style', 'example-border-color'); // 1px solid red
-*     @oBrandGet('inverse-stripe-color'); // black
-*
-* @access public
-* @param {string} $component
-* @param {arglist} $variables
-* @return {string | number | color | null}
-**/
-@function oBrandGet($component, $variables...) {
-    // For one variable return value.
-    @if length($variables) == 1 {
-        @return _oBrandGetVariableValue($component, nth($variables, 1));
-    }
-    // Concatenate multiple requested variables for use in one property.
-    $values: ();
-    @each $variable in $variables {
-        @if $variable {
-            $values: join($values,  _oBrandGetVariableValue($component, $variable));
-        }
-    }
-    @return $values;
-}
-
-/**
 * Configures a content block for a brand variant.
 * A single variant (string) or compound variant (list) is accepted.
 * This mixin may also be nested to target compound variants.
@@ -106,7 +64,7 @@ $_o-brand-depth: () !default; // The number of current variant parts by componen
 * Calls for brand variables within will return the value for the configured variant.
 *
 * @example
-*     oBrandConfigureFor('inverse') {
+*     oBrandConfigureFor('o-component', 'inverse') {
 *        // Will use configuration for the 'inverse' variant when getting variable values.
 *        // This will not be output if the brand does not support the "inverse" variant.
 *       oBrandConfigureFor('b2b') {
@@ -115,7 +73,7 @@ $_o-brand-depth: () !default; // The number of current variant parts by componen
 *     }
 *
 * @example
-*     oBrandConfigureFor(('inverse', 'b2b')) {
+*     oBrandConfigureFor('o-component', ('inverse', 'b2b')) {
 *        // Will use configuration for the compound variant 'inverse,b2b' when fetching variable values.
 *     }
 *
@@ -139,6 +97,48 @@ $_o-brand-depth: () !default; // The number of current variant parts by componen
     }
     // Variant content output. Remove from the current variant so future CSS is not effected.
     @include _oBrandRemoveFromCurrentVariant($component, $variant);
+}
+
+/**
+* Gets a variable for the current brand and configured for variant.
+* If multiple variables are requested they are concatenated for use as one property.
+*
+* @example
+*     @oBrandGet('o-component', ('example-border-size', 'example-border-style', 'example-border-color')); // 1px solid red
+*     @oBrandGet('o-component', 'inverse-stripe-color'); // black
+*
+* @access public
+* @param {string} $component
+* @param {string | list} $variables
+* @return {string | number | color | null}
+**/
+@function oBrandGet($component, $variables) {
+    // For one variable return value.
+    @if length($variables) == 1 {
+        @return _oBrandGetVariableValue($component, nth($variables, 1));
+    }
+    // Concatenate multiple requested variables for use in one property.
+    $values: ();
+    @each $variable in $variables {
+        @if $variable {
+            $values: join($values,  _oBrandGetVariableValue($component, $variable));
+        }
+    }
+    @return $values;
+}
+
+/**
+* Check the default brand is configured. Otherwise using o-brand is not allowed.
+* The default brand must be configured by the component as it is the fallback.
+*
+* @access private
+* @param {string} $component
+* @return {boolean}
+**/
+@function _oBrandIsDefaultConfigured($component) {
+    $component-brands: map-get($_o-brands, $component);
+    $component-brands: if(type-of($component-brands) == 'map', $component-brands, ());
+    @return type-of(map-get($component-brands, $_o-brand-default)) == 'map';
 }
 
 /**
