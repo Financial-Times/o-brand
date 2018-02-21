@@ -125,6 +125,10 @@ $_o-brand-variant: () !default;
 * @param {string | list} $variant
 **/
 @mixin oBrandConfigureFor($component, $variant) {
+    // The default brand must be configured before o-brand can be used.
+    @if not _oBrandIsDefaultConfigured($component) {
+        @error 'The default brand "#{$_o-brand-default}" must be defined for "#{$component}" before using o-brand.';
+    }
     // Validate variant.
     @if type-of($variant) != 'list' and type-of($variant) != 'string' {
         @error 'Cound not configure for variant #{type-of($variant)} "#{$variant}", expecting a list or string.';
@@ -247,7 +251,7 @@ $_o-brand-variant: () !default;
     $current-depth: _oBrandGetCurrentDepth($component);
     $current-depth: $current-depth - length($variant);
     // Set new current depth.
-    $current-depth: _oBrandSetCurrentDepth($component, current-depth);
+    $current-depth: _oBrandSetCurrentDepth($component, $current-depth);
     $current-variant: _oBrandGetCurrentVariant($component);
     @if $current-depth == 0 {
         $current-variant: _oBrandSetCurrentVariant($component, ());
@@ -277,7 +281,7 @@ $_o-brand-variant: () !default;
     $component-brands: if(type-of($component-brands) == 'map', $component-brands, ());
     $brand-config: map-get($component-brands, $brand);
     // The default brand must be configured before o-brand can be used.
-    @if _oBrandIsDefaultConfigured($component) {
+    @if not _oBrandIsDefaultConfigured($component) {
         @error 'The default brand "#{$_o-brand-default}" must be defined for "#{$component}" before using o-brand.';
     }
     // Validate the requested brand is configured, fallback to the default brand otherwise.
@@ -350,7 +354,8 @@ $_o-brand-variant: () !default;
 * @return {list}
 **/
 @function _oBrandGetCurrentVariant($component) {
-    @return map-get($_o-brand-variant, $component);
+    $current-variant: map-get($_o-brand-variant, $component);
+    @return if(type-of($current-variant) == 'map', $current-variant, ());
 }
 
 /**
