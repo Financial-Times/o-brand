@@ -109,7 +109,7 @@ $_o-table-default-brand-is-configured: false !default;
     }
     // Add to current variant to output variant content.
     @include _oBrandAddToCurrentVariant($variant);
-    @if _oBrandSupports($variant) { // @todo should this variant check be against the whole current variant?
+    @if _oBrandSupports($_o-table-current-variant) {
         @content;
     }
     // Variant content output. Remove from the current variant so future CSS is not effected.
