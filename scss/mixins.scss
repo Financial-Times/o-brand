@@ -114,6 +114,7 @@ $_o-brand-depth: () !default; // The number of current variant parts by componen
 **/
 @function oBrandGet($component, $variables) {
     // For one variable return value.
+
     @if length($variables) == 1 {
         @return _oBrandGetVariableValue($component, nth($variables, 1));
     }
@@ -191,7 +192,7 @@ $_o-brand-depth: () !default; // The number of current variant parts by componen
     $variables: map-get($brand-config, 'variables');
     // Use variant variables if a variant is configured.
     $current-variant: _oBrandGetCurrentVariant($component);
-    @if length($current-variant) > 0 {
+    @if type-of($current-variant) == 'list' or type-of($current-variant) == 'map' {
         $variables: map-get($variables, _oBrandQuickSort($current-variant));
     }
     // Variables for the current brand and variant found.
