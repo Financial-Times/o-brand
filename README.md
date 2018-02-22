@@ -20,7 +20,7 @@ Examples of brands include:
 - Internal: Style suitable for internal products, tools, and documentation.
 - Whitelabel: Base, structural styles only.
 
-### Variants
+### Variant
 
 A branded component may contain one or more variants e.g. a button component may provide a "big" and "small" variant. Variants may change the appearance or functionality of a component. They may override default brand styles, e.g. change the colour of a button. Variants may also require new markup e.g. to add a breadcrumb to a header component. Variants must be optional and build upon a fully functional branded component.
 
