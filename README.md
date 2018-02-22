@@ -68,13 +68,19 @@ The following mixins and functions help brand a component.
 
 ### Defining Brand Configuration
 
-A component must first define the configuration for its supported brands. To do that use the mixin `oBrandDefine`. First define the required default brand `master`.
+A component must first define the configuration for its supported brands. To do that use the mixin `oBrandDefine`.
 
-To define a brand pass a configuration map. Configuration comprises of a `variables` and `settings` map.
+First define the required brand `master`, this is the default brand.
 
-Settings show which variants the brand supports. Variables contain key/value pairs for later retrieval. To configure variants variables nest another map within the `variables`.
+Brand configuration comprises:
+- `variables`
+- `settings`
 
-The below example defines a brand `master` for the component `o-example`. We define a default variable `component-content`. We provide a different value for the `inverse` variant. And an again different value for the compound variant `inverse demo`. Using the settings map we state the `master` brand supports these two variants.
+Variables contain key/value pairs for later retrieval. To configure variant variables nest another map within the `variables` map -- where the map key identifies the variant.
+
+Settings show which variants the brand supports. Explicit settings enables the creation of variants which do not need variable configuration -- e.g. the `extra` variant in these examples.
+
+The below example defines a brand `master` for the component `o-example`. We define a default variable `component-content`. We provide a different value for the `inverse` variant and a different value for the compound variant `inverse demo`. Using the settings map we state the `master` brand supports these two variants and another variant `extra`, which does not need any configured variables.
 
 ```scss
 @include oBrandDefine('o-example', 'master', (
@@ -143,7 +149,7 @@ Nesting is also supported:
 
 ### Output Styles Only If A Brand Supports A Variant
 
-Not all brands will share variants. Define support in the `settings` map as demonstrated above. Explicit settings enables the creation of variants which do not need variable configuration -- e.g. the `extra` variant in these examples. To output styles only if the current brand supports the variant use `oBrandConfigureFor`.
+Not all brands will share variants. Define support in the `settings` map as demonstrated above. To output styles only if the current brand supports the variant use `oBrandConfigureFor`.
 
 ```scss
 @include oBrandConfigureFor('o-example', 'b2b') {
