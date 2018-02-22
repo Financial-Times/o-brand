@@ -6,6 +6,6 @@
         "sass-true": "^3.0.2"
     },
     "scripts": {
-        "test": "mocha test/scss"
+        "test-scss": "mocha test-scss"
     }
 }
