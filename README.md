@@ -1,11 +1,10 @@
 o-brand [![Circle CI](https://circleci.com/gh/Financial-Times/o-brand/tree/master.svg?style=svg)](https://circleci.com/gh/Financial-Times/o-brand/tree/master)
 =================
 
-Tools to "brand" Origami components. `o-brand` is intended as an internal tool and **must not** be depended on directly outside of Origami components.
+Tools to "brand" Origami components. Other non-Origami projects should not depend on `o-brand` directly.
 
 - [Terms](#terms)
 - [Usage](#usage)
-	- [Sass](#sass)
 - [Contact](#contact)
 - [Licence](#licence)
 
@@ -13,20 +12,21 @@ Tools to "brand" Origami components. `o-brand` is intended as an internal tool a
 
 ### Brand
 
-A brand is a collection of configuration to tailor a component for specifc usecases. A branded Origami component is able to output the correct visual style and features for a requested brand.
+A brand is a collection of configuration to tailor a component for specific use-cases. A branded Origami component is able to output differing styles for a requested brand. It is also able to include extra styles specific to a brand.
 
 Examples of brands include:
 
 - Master: FT branding for public ft.com sites and affiliates.
-- Internal: A minimal style with subtle branding for internal products, tools, and documentation.
+- Internal: Style suitable for internal products, tools, and documentation.
 - Whitelabel: Base, structural styles only.
 
 ### Variants
 
-A branded component may contain a number of variants e.g. a button component may provide a "big" and "small" variant. Variants may modify the appearance or functionality of a component. They may override default brand styles, e.g. change the colour of a button. Variants may also require new markup e.g. to add a breadcrumb to a header component. Variants must be optional and build upon a fully functional branded component.
+A branded component may contain one or more variants e.g. a button component may provide a "big" and "small" variant. Variants may change the appearance or functionality of a component. They may override default brand styles, e.g. change the colour of a button. Variants may also require new markup e.g. to add a breadcrumb to a header component. Variants must be optional and build upon a fully functional branded component.
 
 E.g.
-Brand variants modify a fully functional foundation.
+
+1. Brand variants modify a fully functional foundation.
 ```scss
 	.o-example {
 		content: 'component';
@@ -35,7 +35,7 @@ Brand variants modify a fully functional foundation.
 ```html
 	<div class="o-example"></div>
 ```
-Variants may override styles.
+2. Variants may override styles.
 ```scss
 	.o-example--inverse {
 		content: 'example variant "inverse"';
@@ -44,8 +44,7 @@ Variants may override styles.
 ```html
 	<div class="o-example o-example--inverse"></div>
 ```
-
-Variants may require additional markup.
+3. Variants may require additional markup.
 ```scss
 	.o-example__extra {
 		content: 'example feature variant "extra"';
@@ -61,7 +60,7 @@ Variants may require additional markup.
 
 Mixins within `o-brand` help configure components to support brands. There is no configuration in `o-brand`. It provides the mechanisms for components to apply their own brand support.
 
-The following mixins and functions are provided to brand a component.
+The following mixins and functions help brand a component.
 
 - oBrandDefine
 - oBrandConfigureFor
@@ -69,19 +68,19 @@ The following mixins and functions are provided to brand a component.
 
 ### Defining Brand Configuration
 
-A component must first define the configuration for its supported brands. To do that use the mixin `oBrandDefine`. The default brand `master` must be defined.
+A component must first define the configuration for its supported brands. To do that use the mixin `oBrandDefine`. First define the required default brand `master`.
 
-To define a component brand pass a `variables` and `settings` map. Variables contain key/value pairs which can be retrieved later. Variant variables are nested within the `variables` map.
+To define a brand pass a configuration map. Configuration comprises of a `variables` and `settings` map.
 
-Settings indicate what variants should be supported by the brand.
+Settings show which variants the brand supports. Variables contain key/value pairs for later retrieval. To configure variants variables nest another map within the `variables`.
 
-The below shows defining a brand `master` for the component `o-example`. We define a default variables `component-content` which is different for variant `inverse` and compound variant `inverse demo`. We indicate the `master` brand supports these two variants in the `settings` map.
+The below example defines a brand `master` for the component `o-example`. We define a default variable `component-content`. We provide a different value for the `inverse` variant. And an again different value for the compound variant `inverse demo`. Using the settings map we state the `master` brand supports these two variants.
 
 ```scss
 @include oBrandDefine('o-example', 'master', (
     'variables': (
         component-content: 'default value',
-        'inverse': (demo
+        'inverse': (
             component-content: '"inverse" variant value'
         ),
         ('inverse', 'demo'): (
@@ -111,7 +110,7 @@ Building on the "define" example above:
 
 ### Retrieve A Variable For A Variant
 
-To retrieve a variable for a variant use `oBrandConfigureFor`. This mixin accepts a content block and variant. This indicates styles within the content block are intended for the passed variant.
+To retrieve a variable for a variant use `oBrandConfigureFor`. This mixin accepts a content block and variant. This indicates styles within the content block should pertain to the passed variant.
 
 Building on the "define" example above:
 ```scss
@@ -134,8 +133,8 @@ To retrieve a variable for a compound variant pass a list:
 Nesting is also supported:
 ```scss
 @include oBrandConfigureFor('o-example', 'inverse') {
-	.o-example--inverse.o-example--demo {
-		@include oBrandConfigureFor('o-example', 'demo') {
+	@include oBrandConfigureFor('o-example', 'demo') {
+		.o-example--inverse.o-example--demo {
 			content: oBrandGet('o-example', 'component-content'); // "inverse demo" variant value
 		}
 	}
@@ -144,24 +143,35 @@ Nesting is also supported:
 
 ### Output Styles Only If A Brand Supports A Variant
 
-Not all brands will share variants. Support is defined in the `settings` map as demonstrated above. To only output styles if the variant is supported wrap variant styles in `oBrandConfigureFor`.
+Not all brands will share variants. Define support in the `settings` map as demonstrated above. Explicit settings enables the creation of variants which do not need variable configuration -- e.g. the `extra` variant in these examples. To output styles only if the current brand supports the variant use `oBrandConfigureFor`.
 
 ```scss
 @include oBrandConfigureFor('o-example', 'b2b') {
 	.o-example--b2b {
 		// The brand defined above does not support a "b2b" variant.
 		// CSS here will not be output.
-		content: '"b2b" variant not available for this brand.';
+		content: '"b2b" variant not available for the current brand.';
 	}
 }
 @include oBrandConfigureFor('o-example', 'extra') {
 	.o-example__extra {
 		// The brand defined above does support an "extra" variant.
 		// CSS here is output.
-		content: '"extra" variant available for this brand.';
+		content: '"extra" variant is supported by the current brand.';
+	}
+}
+@include oBrandConfigureFor('o-example', ('extra', 'b2b')) {
+	.o-example__b2b.o-example__extra {
+		// As this current brand does not support the "b2b" variant the
+		// "extra b2b" compound variant is not supported.
+		content: '"extra b2b" variant not available for the current brand.';
 	}
 }
 ```
+
+### Change The Current Brand
+
+The default brand is `master`. Projects which consume branded Origami components may choose a different brand by setting the SCSS variable `$o-brand`.
 
 ---
 
