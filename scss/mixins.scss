@@ -1,5 +1,5 @@
 $o-brand: null !default; // The chosen current brand.
-$_o-brand-default: 'masterbrand'; // The fallback current brand. Allows us to check if o-brand is set explicitly.
+$_o-brand-default: 'master'; // The fallback current brand. Allows us to check if o-brand is set explicitly.
 $_o-brands: () !default; // A map of components to their defined brands.
 $_o-brand-variant: () !default; // Current variant by component.
 $_o-brand-depth: () !default; // The number of current variant parts by component.
