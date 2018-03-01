@@ -64,7 +64,7 @@ The following mixins and functions help brand a component.
 
 - [oBrandDefine](#defining-brand-configuration) - Define brand configuration (variables & settings).
 - [oBrandGet](#retrieve-a-variable-for-a-variant) - Retrieve brand variables.
-- [oBrandConfigureFor](#output-styles-only-if-a-brand-supports-a-variant) - Work with brand variants.
+- [oBrandConfigureFor](#output-styles-only-if-a-brand-supports-a-variant) - Work with variants.
 
 ### Defining Brand Configuration
 
