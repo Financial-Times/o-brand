@@ -22,7 +22,7 @@ Examples of brands include:
 
 ### Variant
 
-A branded component may contain one or more variants e.g. a button component may provide a "big" and "small" variant. Variants may change the appearance or functionality of a component. They may override default brand styles, e.g. change the colour of a button. Variants may also require new markup e.g. to add a breadcrumb to a header component. Variants must be optional and build upon a fully functional branded component.
+Variants are things which can alter the appearance and/or functionality of a component. E.g. A branded component may contain multiple variants which change the appearance of the component such as a "big" variant, a "small" variant, etc. Variants must be optional and build upon a fully functional branded component.
 
 E.g.
 
@@ -62,23 +62,48 @@ Mixins within `o-brand` help configure components to support brands. There is no
 
 The following mixins and functions help brand a component.
 
-- oBrandDefine
-- oBrandConfigureFor
-- oBrandGet
+- [oBrandDefine](#defining-brand-configuration) - Define brand configuration (variables & settings).
+- [oBrandGet](#retrieve-a-variable-for-a-variant) - Retrieve brand variables.
+- [oBrandConfigureFor](#output-styles-only-if-a-brand-supports-a-variant) - Work with brand variants.
 
 ### Defining Brand Configuration
 
 A component must first define the configuration for its supported brands. To do that use the mixin `oBrandDefine`.
 
-First define the required brand `master`, this is the default brand.
+First define the default brand `master`, this is required.
 
 Brand configuration comprises:
 - `variables`
 - `settings`
 
-Variables contain key/value pairs for later retrieval. To configure variant variables nest another map within the `variables` map -- where the map key identifies the variant.
+Brand variables define how a component should look for the given brand. They are defined as a map of key/value pairs, where the key is later used to retrieve the value to style the component e.g. with a CSS property. The key should not be the exact name of a CSS property to avoid confusion.
 
-Settings show which variants the brand supports. Explicit settings enables the creation of variants which do not need variable configuration -- e.g. the `extra` variant in these examples.
+```scss
+$variables: (
+	component-border-color: 'black'
+);
+```
+
+Variant variables will take precedence over default brand variables. To configure variant variables nest them, where the key is the variant. E.g. to configure an "inverse" variant:
+
+```scss
+$variables: (
+	component-border-color: 'black',
+	'inverse': (
+		component-border-color: 'white'
+	)
+);
+```
+
+Settings hold boolean values to indicate which variants a brand supports. Settings are `false` by default. A brand should not output styles for a variant if the brand does not explicitly support it. To indicate support of an "inverse" variant a brand may include configuration like so:
+
+```scss
+$settings: (
+	'inverse': true
+);
+```
+
+Explicit settings enables the creation of variants which do not need variable configuration -- e.g. the `extra` variant in the following examples.
 
 The below example defines a brand `master` for the component `o-example`. We define a default variable `component-content`. We provide a different value for the `inverse` variant and a different value for the compound variant `inverse demo`. Using the settings map we state the `master` brand supports these two variants and another variant `extra`, which does not need any configured variables.
 
@@ -90,7 +115,7 @@ The below example defines a brand `master` for the component `o-example`. We def
             component-content: '"inverse" variant value'
         ),
         ('inverse', 'demo'): (
-            component-content: '"inverse " variant value'
+            component-content: '"inverse demo" variant value'
         )
     ),
     'settings': (
@@ -101,11 +126,9 @@ The below example defines a brand `master` for the component `o-example`. We def
 ));
 ```
 
-### Using Brand Configuration
-
 ### Retrieve A Variable
 
-To retrieve a variable previousy defined for a brand use the function `oBrandGet`. This gets the value for the requested component variable.
+To retrieve a variable previously defined for a brand, use the function `oBrandGet`. This gets the value for the requested component variable.
 
 Building on the "define" example above:
 ```scss
