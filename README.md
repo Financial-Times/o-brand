@@ -63,8 +63,8 @@ Mixins within `o-brand` help configure components to support brands. There is no
 The following mixins and functions help brand a component.
 
 - [oBrandDefine](#defining-brand-configuration) - Define brand configuration (variables & settings).
-- [oBrandGet](#retrieve-a-variable-for-a-variant) - Retrieve brand variables.
-- [oBrandConfigureFor](#output-styles-only-if-a-brand-supports-a-variant) - Work with variants.
+- [oBrandGet](#retrieve-a-variable) - Retrieve brand variables.
+- [oBrandConfigureFor](#retrieve-a-variable-for-a-variant) - Work with variants.
 
 ### Defining Brand Configuration
 
@@ -73,10 +73,12 @@ A component must first define the configuration for its supported brands. To do 
 First define the default brand `master`, this is required.
 
 Brand configuration comprises:
-- `variables`
-- `settings`
+- [`variables`](#brand-variables)
+- [`settings`](#brand-settings)
 
-Brand variables define how a component should look for the given brand. They are defined as a map of key/value pairs, where the key is later used to retrieve the value to style the component e.g. with a CSS property. The key should not be the exact name of a CSS property to avoid confusion.
+#### Brand Variables
+
+Brand variables define how a component should look for the given brand. They are defined as a map of key/value pairs, where the key is later used to retrieve the value to style the component e.g. with a CSS property. The key should not be the exact name of a CSS property to avoid confusion. E.g. to configure a variable "component-border-color" to "black":
 
 ```scss
 $variables: (
@@ -95,7 +97,9 @@ $variables: (
 );
 ```
 
-Settings hold boolean values to indicate which variants a brand supports. Settings are `false` by default. A brand should not output styles for a variant if the brand does not explicitly support it. To indicate support of an "inverse" variant a brand may include configuration like so:
+#### Brand Settings
+
+Settings hold boolean values to indicate which variants a brand supports. Settings are `false` by default. A component should not output styles for a variant if the current brand does not explicitly support it. To indicate support of an "inverse" variant a brand may include configuration like so:
 
 ```scss
 $settings: (
@@ -103,7 +107,9 @@ $settings: (
 );
 ```
 
-Explicit settings enables the creation of variants which do not need variable configuration -- e.g. the `extra` variant in the following examples.
+Explicit settings enables the creation of variants which do not need variable configuration -- e.g. the `extra` variant in the following example.
+
+#### A Complete `oBrandDefine` Example
 
 The below example defines a brand `master` for the component `o-example`. We define a default variable `component-content`. We provide a different value for the `inverse` variant and a different value for the compound variant `inverse demo`. Using the settings map we state the `master` brand supports these two variants and another variant `extra`, which does not need any configured variables.
 
@@ -141,6 +147,8 @@ Building on the "define" example above:
 
 To retrieve a variable for a variant use `oBrandConfigureFor`. This mixin accepts a content block and variant. This indicates styles within the content block should pertain to the passed variant.
 
+Styles within `oBrandConfigureFor` are [only output if the current brand supports the variant](#output-styles-only-if-a-brand-supports-a-variant).
+
 Building on the "define" example above:
 ```scss
 @include oBrandConfigureFor('o-example', 'inverse') {
@@ -173,6 +181,8 @@ Nesting is also supported:
 ### Output Styles Only If A Brand Supports A Variant
 
 Not all brands will share variants. Define support in the `settings` map as demonstrated above. To output styles only if the current brand supports the variant use `oBrandConfigureFor`.
+
+Uses of `oBrandGet` within `oBrandConfigureFor` [retrieves a variable for a variant](#retrieve-a-variable-for-a-variant).
 
 ```scss
 @include oBrandConfigureFor('o-example', 'b2b') {
