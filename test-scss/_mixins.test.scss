@@ -123,7 +123,7 @@
         }
     }
 
-    @include test('Gets a variable value for a configured variant, regardless of list seperator') {
+    @include test('Gets a variable value for a configured variant, regardless of list separator') {
         // space
         @include oBrandConfigureFor($component: 'o-example', $variant: ('b2b' 'inverse')) {
             $property: oBrandGet($component: 'o-example', $variables: 'example-background');
