@@ -517,15 +517,13 @@ $_o-brand-depth: () !default; // The number of current variant parts by componen
         @each $key, $value in $map2 {
             @if (type-of(map-get($result, $key)) == map and type-of($value) == map) {
                 $result: map-merge($result, ($key: _oBrandRecursiveMapMerge(map-get($result, $key), $value)));
-            }
-            @else {
+            } @else {
                 $result: map-merge($result, ($key: $value));
             }
         }
         @return $result;
-    }
-    @else {
-        @warn '_oBrandRecursiveMapMerge() expects it\'s parameters to be map types!';
+    } @else {
+        @warn '_oBrandRecursiveMapMerge() expects it\'s parameters to be of type "map".';
         @return null;
     }
 }
