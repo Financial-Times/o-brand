@@ -111,19 +111,20 @@ $_o-brand-depth: () !default; // The number of current variant parts by componen
 * @access public
 * @param {string} $component
 * @param {string | list} $variables
+* @param {string | list} $force-variant Get a variable for a specific variant, disregard any configured variant (`oBrandConfigureFor`).
 * @return {string | number | color | null}
 **/
-@function oBrandGet($component, $variables) {
+@function oBrandGet($component, $variables, $force-variant: null) {
     // For one variable return value.
 
     @if length($variables) == 1 {
-        @return _oBrandGetVariableValue($component, nth($variables, 1));
+        @return _oBrandGetVariableValue($component, nth($variables, 1), $force-variant);
     }
     // Concatenate multiple requested variables for use in one property.
     $values: ();
     @each $variable in $variables {
         @if $variable {
-            $values: join($values,  _oBrandGetVariableValue($component, $variable));
+            $values: join($values,  _oBrandGetVariableValue($component, $variable, $force-variant));
         }
     }
     @return $values;
@@ -185,14 +186,18 @@ $_o-brand-depth: () !default; // The number of current variant parts by componen
 * @access private
 * @param {string} $component
 * @param {string} $variable
+* @param {string | list} $force-variant Get a variable for a specific variant, disregard any configured variant (`oBrandConfigureFor`).
 * @return {string | number | color | null}
 **/
-@function _oBrandGetVariableValue($component, $variable) {
+@function _oBrandGetVariableValue($component, $variable, $force-variant: null) {
     // Get all brand variables.
     $brand-config: _oBrandGetConfig($component, $o-brand);
     $variables: map-get($brand-config, 'variables');
     // Use variant variables if a variant is configured.
-    $current-variant: _oBrandGetCurrentVariant($component);
+    @if $force-variant and not (type-of($force-variant) == 'list' or type-of($force-variant) == 'string') {
+        @error 'Could not get get variable "#{$variable}" for component "#{$component}" and variant "#{$force-variant}", the variant should be of type string or list but was "#{type-of($force-variant)}".';
+    }
+    $current-variant: if($force-variant, $force-variant, _oBrandGetCurrentVariant($component));
     $variant-variables: map-get($variables, _oBrandNormaliseVariant($current-variant));
     @if type-of($variant-variables) == 'map' {
         $variables: $variant-variables;

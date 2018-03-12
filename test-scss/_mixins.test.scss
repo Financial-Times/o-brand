@@ -176,4 +176,19 @@
             @include assert-equal($property, grey);
         }
     }
+
+    @include test('Gets a variable value for a "forced" variant') {
+        $property: oBrandGet($component: 'o-example', $variables: 'example-background', $force-variant: 'inverse');
+        @include assert-equal($property, grey);
+
+        $property: oBrandGet($component: 'o-example', $variables: 'example-background', $force-variant: ('inverse', 'b2b'));
+        @include assert-equal($property, darkred);
+    }
+
+    @include test('Gets a variable value for a "forced" variant, ignoring configured variants') {
+        @include oBrandConfigureFor($component: 'o-example', $variant: 'b2b') {
+            $property: oBrandGet($component: 'o-example', $variables: 'example-background', $force-variant: 'inverse');
+            @include assert-equal($property, grey);
+        }
+    }
 }
