@@ -179,7 +179,7 @@ Nesting is also supported:
 }
 ```
 
-A variable may also be retrieved for an explicit variant using the `$force-variant` argument of `oBrandGet`. This is useful when retrieving a variant value within a function, or when a specific value is needed regardless of what variant is current configured using `oBrandConfigureFor`.
+A variable may also be retrieved for an explicit variant using the `$force-variant` argument of `oBrandGet`. This is useful when retrieving a variant value within a function, or when a specific value is needed regardless of what variant is configured by `oBrandConfigureFor`.
 
 ```scss
 	.o-example--inverse {
@@ -219,7 +219,7 @@ Uses of `oBrandGet` within `oBrandConfigureFor` [retrieves a variable for a vari
 
 ### Override The Current Brand
 
-It may be desirable to output a customised variant of a component based on the current brand. To do this create a mixin which maps arguments to `oBrandOverride`. This prevents brand configuration from becoming a public interface, which makes it possible to change brand variables at a later point without a breaking change.
+It may be desirable to output a customised variant of a component based on brand configuration. To do this create a component specific mixin which maps arguments to `oBrandOverride`. This prevents brand configuration from becoming a public interface, which makes it possible to change brand variables at a later point without a breaking change.
 
 The following contrived example shows how to override brand variables:
 
