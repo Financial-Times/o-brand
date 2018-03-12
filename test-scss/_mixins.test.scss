@@ -90,6 +90,31 @@
             }
         }
     }
+
+    @include test('Ignores null variants') {
+        @include oBrandConfigureFor($component: 'o-example', $variant: null) { // should have no effect
+            @include oBrandConfigureFor($component: 'o-example', $variant: 'inverse') {
+                @include oBrandConfigureFor($component: 'o-example', $variant: null) { // should have no effect
+                    // variant: inverse
+                    $property: oBrandGet($component: 'o-example', $variables: 'example-background');
+                    @include assert-equal($property, grey);
+                    // variant: inverse b2b
+                    @include oBrandConfigureFor($component: 'o-example', $variant: 'b2b') {
+                        @include oBrandConfigureFor($component: 'o-example', $variant: null) { // should have no effect
+                            $property: oBrandGet($component: 'o-example', $variables: 'example-background');
+                            @include assert-equal($property, darkred);
+                        }
+                    }
+                    // variant: inverse
+                    $property: oBrandGet($component: 'o-example', $variables: 'example-background');
+                    @include assert-equal($property, grey);
+                }
+            }
+        }
+        // variant: none
+        $property: oBrandGet($component: 'o-example', $variables: 'example-background');
+        @include assert-equal($property, white);
+    }
 }
 
 @include test-module('oBrandGet') {

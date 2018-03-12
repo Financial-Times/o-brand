@@ -88,8 +88,8 @@ $_o-brand-depth: () !default; // The number of current variant parts by componen
         @error 'The default brand "#{$_o-brand-default}" must be defined for "#{$component}" before using o-brand.';
     }
     // Validate variant.
-    @if type-of($variant) != 'list' and type-of($variant) != 'string' {
-        @error 'Cound not configure for variant #{type-of($variant)} "#{$variant}", expecting a list or string.';
+    @if type-of($variant) != 'list' and type-of($variant) != 'string' and type-of($variant) != 'null' {
+        @error 'Cound not configure for variant "#{$variant}" of type "#{type-of($variant)}", expecting a list or string.';
     }
     // Add to current variant to output variant content.
     @include _oBrandAddToCurrentVariant($component, $variant);
@@ -157,7 +157,7 @@ $_o-brand-depth: () !default; // The number of current variant parts by componen
 **/
 @function _oBrandSupports($component, $variant) {
     // Validate variant.
-    @if type-of($variant) != 'list' and type-of($variant) != 'string' {
+    @if type-of($variant) != 'list' and type-of($variant) != 'string' and type-of($variant) != 'null' {
         @error 'Cound not check support for variant #{type-of($variant)} "#{$variant}", expecting a list or string.';
     }
     // Get all brand settings, which are used to indicate variant support.
