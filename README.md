@@ -228,13 +228,13 @@ The following contrived example shows how to override brand variables:
 	$custom-config: ('variables', {
 		'example-background-color': $background-color,
 		'example-color': $forground-color,
-		'border-color': $forground-color,
+		'example-border-color': $forground-color,
 	});
 
 	@include oBrandOverride('o-example', $custom-config) {
 		background: oBrandGet('example-background-color');
 		color: oBrandGet('example-color');
-		border: 1px solid oBrandGet('border-color');
+		border: 1px solid oBrandGet('example-border-color');
 	};
 }
 ```
