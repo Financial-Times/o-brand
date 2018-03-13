@@ -84,7 +84,7 @@ $_o-brand-depth: () !default; // The number of current variant parts by componen
         @error '`oBrandOverride` must wrap any `oBrandConfigureFor` call. Brand config cannot be overriden within a `oBrandConfigureFor` content block.';
     }
     @if $config {
-        $brand: if($o-brand, $o-brand, $o-brand-default);
+        $brand: if($o-brand, $o-brand, $_o-brand-default);
         // Get original config.
         $original-config: _oBrandGetConfig($component, $brand);
         // Override config.
