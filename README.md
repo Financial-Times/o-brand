@@ -34,10 +34,10 @@ Mixins within `o-brand` help configure components to support brands. There is no
 
 The following mixins and functions help brand a component.
 
-- [oBrandDefine](#oBrandDefine) - Defines brand configuration (variables & settings).
-- [oBrandGet](#retrieve-a-variable) - Retrieves brand variables.
-- [oBrandConfigureFor](#retrieve-a-variable-for-a-variant) - Supports working with variants.
-- [oBrandOverride](#override-the-current-brand) - Helps customise a defined brand.
+- [oBrandDefine](#obranddefine) - Defines brand configuration (variables & settings).
+- [oBrandGet](#obrandget) - Retrieves brand variables.
+- [oBrandConfigureFor](#obrandconfigurefor) - Supports working with variants.
+- [oBrandOverride](#obrandoverride) - Helps customise a defined brand.
 
 ### oBrandDefine
 
@@ -66,7 +66,7 @@ $variables: (
 );
 ```
 
-A nested map configures a variant, which may provide new variables or more commonly a different value for an existing variable. E.g. for an `inverse` variant which has a different value for the variable `example-background`:
+A nested map configures a variant, which may provide new variables or a different value for an existing variable. E.g. for an `inverse` variant which has a different value for the variable `example-background`:
 
 ```scss
 $variables: (
@@ -100,7 +100,7 @@ $variables: (
 
 #### Brand Settings
 
-Brand settings provide boolean flags to turn variants on/off for a brand. Add the variant name to the settings map if the brand supports it. E.g. To configure support for inverse and b2b variants.
+Variants are considered unsupported by default, unless configured otherwise with settings. Brand settings provide boolean flags to turn variants on for a brand. Add the variant name to the settings map if the brand supports it. E.g. To configure support for inverse and b2b variants.
 
 ```scss
 $settings: (
@@ -110,7 +110,6 @@ $settings: (
 ```
 
 - Variant support is not determined by defined variables as some variants may not need variables. E.g. a "sticky" variant of a header may need no configuration, other than a setting to turn support on/off.
-- Variants are considered unsupported by default, unless configured otherwise with settings.
 
 #### A Complete `oBrandDefine` Example
 
