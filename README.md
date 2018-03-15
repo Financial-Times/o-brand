@@ -1,9 +1,14 @@
 o-brand [![Circle CI](https://circleci.com/gh/Financial-Times/o-brand/tree/master.svg?style=svg)](https://circleci.com/gh/Financial-Times/o-brand/tree/master)
 =================
 
-Tools to tailor Origami components for distinct usecases. &#x26A0;&#xFE0F; Non-Origami projects must not depend on `o-brand` directly.
+Tools to tailor Origami components for distinct usecases.
+
+**&#x26A0;&#xFE0F; Non-Origami projects must not depend on `o-brand` directly.**
+
+
 
 - [Terms](#terms)
+- [Motivation](#motivation)
 - [Sass](#sass)
 - [Contact](#contact)
 - [Licence](#licence)
@@ -20,15 +25,21 @@ Brands include:
 - internal: Style suitable for internal products, tools, and documentation.
 - whitelabel: Base, structural styles only.
 
-The default brand is `master`. Projects which consume branded Origami components may choose a different brand.  To do so set the SCSS variable `$o-brand`.
-
 ### Variant
 
 A variant is an addition or modification of a component. A variant may alter the appearance and/or functionality of a component. Variants must be optional and build upon a fully functional component.
 
 E.g. A button component may have an "inverse" variant, a "big" variant, etc. A header component may have a "subnav" variant, a "sticky" variant, etc.
 
+## Motivation
+
+As of March 2018 Origami components provide master brand specific styles inconsistently. Some components aim to provide a generic foundation for visually distinct clients to build upon, e.g. `o-table`, but include CSS classes which unpredictably introduce heavy master brand specific styles. This means some clients need to manually override master brand styles with extra CSS. It also means a non-masterbrand client cannot be confident that new master brand styles will not creep in over time.
+
+Branded components aim to provide styles for "master" and "internal" products which are immediately usable with little or no modification. For products where those do not apply a "whitelabel" brand provides a reliable foundation with little visual styling to build upon.
+
 ## Sass
+
+**The default brand is `master`. Projects which consume branded Origami components may choose a different brand. To do so set the SCSS variable `$o-brand`.**
 
 Mixins within `o-brand` help configure components to support brands. There is no configuration in `o-brand`. It provides the mechanisms for components to apply their own brand support.
 
@@ -41,9 +52,7 @@ The following mixins and functions help brand a component.
 
 ### oBrandDefine
 
-A component must first define the configuration for its supported brands. To do that use the mixin `oBrandDefine`.
-
-First the default brand `master` must be defined for the component.
+A component defines configuration for each of its supported brands. The default brand `master` must be defined. To do that use the mixin `oBrandDefine`.
 
 Brand configuration comprises of variables and settings. As explained below.
 - [`variables`](#brand-variables)
@@ -96,12 +105,13 @@ $variables: (
 
 - Variable names must be a string and should be alphanumeric, including dashes e.g. `example-background`.
 - Variable names should not match css properties exactly e.g. `example-background` over `background`.
-- A variant must be an alphanumeric string or list of alphanumeric strings.
+- A variant must be an alphanumeric string or list of alphanumeric strings e.g. `inverse`, `('b2b', 'inverse')`.
 
 #### Brand Settings
 
-Variants are considered unsupported by default, unless configured otherwise with settings. Brand settings provide boolean flags to turn variants on for a brand. Add the variant name to the settings map if the brand supports it. E.g. To configure support for inverse and b2b variants.
+Variants are unsupported by default. To enable a variant for a brand, add the variant name to the settings map if the brand supports it. Brand settings provide boolean flags to turn variants on.
 
+E.g. To configure support for inverse and b2b variants:
 ```scss
 $settings: (
 	'inverse': true,
@@ -109,7 +119,7 @@ $settings: (
 );
 ```
 
-- Variant support is not determined by defined variables as some variants may not need variables. E.g. a "sticky" variant of a header may need no configuration, other than a setting to turn support on/off.
+- Some variants may not need variables, but may still exist in a component. This means the variant still needs to be set within the brand settings. E.g. a "sticky" variant of a header may need no configuration, other than a setting to turn support on/off.
 
 #### A Complete `oBrandDefine` Example
 
