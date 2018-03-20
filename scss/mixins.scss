@@ -19,11 +19,10 @@ $_o-brand-depth: () !default; // The number of current variant parts by componen
     @if type-of($brand) != 'string' or $brand == '' {
         @error 'Could not set brand "#{$brand}" for component "#{$component}". A brand of type string must be given.';
     }
-    @if _oBrandIsDefined($component, $brand) {
-        @error 'Brand "#{$brand}" is already defined for component "#{$component}".';
-    }
     // Define brand configuration.
-    $result: _oBrandUpdateConfig($component, $brand, $config);
+    @if not _oBrandIsDefined($component, $brand) {
+        $result: _oBrandUpdateConfig($component, $brand, $config);
+    }
 }
 
 
