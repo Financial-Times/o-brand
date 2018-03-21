@@ -164,25 +164,26 @@ To request multiple variables at once, assuming variables `example-border-size: 
 }
 ```
 
-Retrieve a variable for a variant using `oBrandGet` using `$force-variant`. Whilst this is possible use [`oBrandConfigureFor`](#retrieve-a-variable-for-a-variant) instead where possible.
+Retrieve a variable for a variant using `oBrandGet` and `$configure-for`.
 ```scss
 .o-example--inverse {
-	background: oBrandGet($component: 'o-example', $variables: 'example-background', $force-variant: 'inverse'); // background: slate;
+	background: oBrandGet($component: 'o-example', $variables: 'example-background', $configure-for: 'inverse'); // background: slate;
 }
 ```
 
 - `oBrandGet` returns `null` if a variable is undefined. Sass removes css properties which are set to `null`. This is a useful feature to conditionally output css properties for different variants.
+- Whilst it is possible to get a brand variable for an explicit component and variant using `oBrandGet`, instead use [`oBrandConfigureFor`](#retrieve-a-variable-for-a-variant) where possible.
 
 ### oBrandConfigureFor
 
-`oBrandConfigureFor` improves working with variants. It accepts a Sass content block which will only output if the brand supports the given variant. It also configures all `oBrandGet` calls within its content block for a given variant.
+`oBrandConfigureFor` configures all `oBrandGet` calls within its content block for a given component and variant, which removes the need to repeatedly pass the component and variant to `oBrandGet`. In addition it will only output the sass content block if the component brand supports the given variant.
 
 Building on the `oBrandDefine` example the following outputs multiple `o-example` variants with different backgrounds. The variants are only output if the brand supports them:
 
 ```scss
 
 @mixin oExampleTheme() {
-	background: oBrandGet($component: 'o-example', $variables: 'example-background');
+	background: oBrandGet($variables: 'example-background');
 }
 
 @include oBrandConfigureFor($component: 'o-example', $variant: 'inverse') {
@@ -208,7 +209,7 @@ Building on the `oBrandDefine` example the following outputs multiple `o-example
 
 ```scss
 @mixin oExampleTheme() {
-	background: oBrandGet($component: 'o-example', $variables: 'example-background');
+	background: oBrandGet($variables: 'example-background');
 }
 
 // "b2b" variant
@@ -236,7 +237,7 @@ $custom-config: ('variables', {
 
 .o-example--custom-variant {
 	@include oBrandOverride('o-example', $custom-config) {
-		background: oBrandGet($component: 'o-example', $variables: 'example-background'); // background: hotpink
+		background: oBrandGet($variables: 'example-background'); // background: hotpink
 	};
 }
 ```
