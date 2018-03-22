@@ -259,6 +259,24 @@
             @include assert-equal($property, 1em);
         }
     }
+
+    @include test('Gets a variable value which has been overridden') {
+        $custom-config: ('variables': (
+                'example-background': blue
+        ));
+        $property: oBrandGet($component: 'o-example', $variables: 'example-background', $override: $custom-config);
+        @include assert-equal($property, blue);
+    }
+
+    @include test('Gets a variant variable value which has been overridden') {
+        $custom-config: ('variables': (
+                'inverse': (
+                    'example-background': hotpink
+                )
+        ));
+        $property: oBrandGet($component: 'o-example', $variables: 'example-background', $configure-for: 'inverse', $override: $custom-config);
+        @include assert-equal($property, hotpink);
+    }
 }
 
 @include test-module('oBrandOverride') {

@@ -4,6 +4,7 @@ $_o-brand-default: 'master'; // The fallback current brand. Allows us to check i
 $_o-brands: () !default; // A map of components to their defined brands.
 $_o-brand-current-component: null !default; // Currently configured component.
 $_o-brand-current-variant: null !default; // Currently configured variant.
+$_o-brand-current-override: null !default; // Currently configured brand config override.
 $_o-brand-default-not-set-warning: false !default; // Has the default not set warning been output.
 
 /// Define component configuration for a brand.
@@ -99,14 +100,12 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
     }
     @include oBrandConfigureFor($component, $variant: null) {
         @if $config {
-            $brand: if($o-brand, $o-brand, $_o-brand-default);
-            // Get original config.
-            $original-config: _oBrandGetConfig($component, $brand);
-            // Override config.
-            $result: _oBrandUpdateConfig($component, $brand, $config);
+            // Set override.
+            $initial-override: $_o-brand-current-override;
+            $_o-brand-current-override: $config !global;
             @content;
-            // Remove override. Back to original config.
-            $result: _oBrandRestoreConfig($component, $brand, $original-config);
+            // Restore override.
+            $_o-brand-current-override: $initial-override !global;
         } @else {
             @content;
         }
@@ -125,21 +124,35 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
 /// @param {string} $component
 /// @param {string | list} $variables
 /// @param {string | list} $configure-for Get a variable for a specific variant, disregard any configured variant (`oBrandConfigureFor`).
+/// @param {map} $override Configuration to override defined brand configuration. Expects the same as the `oBrandDefine` `$config` argument.
 /// @return {string | number | color | null}
-@function oBrandGet($variables, $component: $_o-brand-current-component, $configure-for: $_o-brand-current-variant) {
+@function oBrandGet($variables, $component: $_o-brand-current-component, $configure-for: $_o-brand-current-variant, $override: $_o-brand-current-override) {
     // For one variable return value.
     @if $component == null {
         @error 'Can not get variable "#{variables}" as the component is not configured. Use `oBrandConfigureFor` or pass a `$component` argument.';
     }
-    @if length($variables) == 1 {
-        @return _oBrandGetVariableValue($component, nth($variables, 1), $configure-for);
+    @if $override and type-of($override) != 'map' {
+        @error '`oBrandGet` expects "$override" to be of type map but was of type "#{type-of($override)}": "#{$override}".';
+    }
+    // Override config.
+    $brand: if($o-brand, $o-brand, $_o-brand-default);
+    $original-config: _oBrandGetConfig($component, $brand);
+    @if $override {
+        $result: _oBrandUpdateConfig($component, $brand, $override);
     }
     // Concatenate multiple requested variables for use in one property.
-    $values: ();
+    $values: null;
     @each $variable in $variables {
-        @if $variable {
-            $values: join($values,  _oBrandGetVariableValue($component, $variable, $configure-for));
+        $value: _oBrandGetVariableValue($component, $variable, $configure-for);
+        @if $values {
+            $values: join($values, $value);
+        } @else {
+            $values: $value;
         }
+    }
+    // Restore original config.
+    @if $override {
+        $result: _oBrandRestoreConfig($component, $brand, $original-config);
     }
     @return $values;
 }
@@ -264,15 +277,26 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
 /// @access private
 /// @param {string} $component
 /// @param {string | list} $variant
+/// @param {map} $override
 /// @return {boolean}
-@function _oBrandSupports($component, $variant) {
+@function _oBrandSupports($component, $variant, $override: $_o-brand-current-override) {
     // Validate variant.
     @if type-of($variant) != 'list' and type-of($variant) != 'string' and type-of($variant) != 'null' {
         @error 'Cound not check support for variant #{type-of($variant)} "#{$variant}", expecting a list or string.';
     }
+    // Override config.
+    $brand: if($o-brand, $o-brand, $_o-brand-default);
+    $original-config: _oBrandGetConfig($component, $brand);
+    @if $override {
+        $result: _oBrandUpdateConfig($component, $brand, $override);
+    }
     // Get all brand settings, which are used to indicate variant support.
     $brand-config: _oBrandGetConfig($component, $o-brand);
     $brand-settings: map-get($brand-config, 'settings');
+    // Restore original config.
+    @if $override {
+        $result: _oBrandRestoreConfig($component, $brand, $original-config);
+    }
     // No settings are enabled so no variants are supported.
     @if type-of($brand-settings) != 'map' {
         @return false;
