@@ -171,8 +171,27 @@ Retrieve a variable for a variant using `oBrandGet` and `$configure-for`.
 }
 ```
 
+Override variables using `oBrandGet` and `$override`. The override paramater accepts configuration to override brand configuration set with `oBrandDefine`, it expects the same configuration format.
+
+Assuming variables `example-background: 'paper'`, `example-border-size: 1px`, `example-border-type: solid`, `example-border-color: grey` are defined using `oBrandDefine`:
+
+```scss
+$custom-config: (
+	'variables': (
+		'example-background': 'hotpink',
+		'example-border-size', '2px'
+	)
+);
+
+.o-example {
+	background: oBrandGet($component: 'o-example', $variables: 'example-background', $override: $custom-config); // background: hotpink;
+	border: oBrandGet($component: 'o-example', $variables: ('example-border-size', 'example-border-type', 'example-border-color'), $override: $custom-config); // border: 2px solid grey;
+}
+```
+
 - `oBrandGet` returns `null` if a variable is undefined. Sass removes css properties which are set to `null`. This is a useful feature to conditionally output css properties for different variants.
-- Whilst it is possible to get a brand variable for an explicit component and variant using `oBrandGet`, instead use [`oBrandConfigureFor`](#retrieve-a-variable-for-a-variant) where possible.
+- Whilst it is possible to get a brand variable for an explicit component and variant using `oBrandGet`, instead use [`oBrandConfigureFor`](#obrandconfigurefor) where possible.
+- Whilst it is possible to override any defined variable using `oBrandGet`, instead use [`oBrandOverride`](#obrandoverride) where possible.
 
 ### oBrandConfigureFor
 
