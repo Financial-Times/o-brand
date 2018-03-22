@@ -200,26 +200,21 @@ $custom-config: (
 Building on the `oBrandDefine` example the following outputs multiple `o-example` variants with different backgrounds. The variants are only output if the brand supports them:
 
 ```scss
-
-@mixin oExampleTheme() {
-	background: oBrandGet($variables: 'example-background');
-}
-
 @include oBrandConfigureFor($component: 'o-example', $variant: 'inverse') {
 	.o-example--inverse {
-		@include oExampleTheme(); // background: paper;
+		background: oBrandGet($variables: 'example-background'); // background: paper;
 	}
 }
 
 @include oBrandConfigureFor($component: 'o-example', $variant: 'b2b') {
 	.o-example--b2b {
-		@include oExampleTheme(); // background: lightblue;
+		background: oBrandGet($variables: 'example-background'); // background: lightblue;
 	}
 }
 
 @include oBrandConfigureFor($component: 'o-example', $variant: ('b2b', 'inverse')) {
 	.o-example--b2b .o-example--inverse {
-		@include oExampleTheme(); // background: darkblue;
+		background: oBrandGet($variables: 'example-background'); // background: darkblue;
 	}
 }
 ```
