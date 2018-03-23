@@ -45,10 +45,10 @@ Mixins within `o-brand` help configure components to support brands. There is no
 
 The following mixins and functions help brand a component.
 
-- [oBrandDefine](#obranddefine) - Defines brand configuration (variables & settings).
-- [oBrandGet](#obrandget) - Retrieves brand variables.
-- [oBrandConfigureFor](#obrandconfigurefor) - Supports working with variants.
-- [oBrandOverride](#obrandoverride) - Helps customise a defined brand.
+- [oBrandDefine](#obranddefine) - Define brand configuration (variables & settings).
+- [oBrandGet](#obrandget) - Retrieve brand variables.
+- [oBrandConfigureFor](#obrandconfigurefor) - Choose a variant and automatically configure `oBrandGet`.
+- [oBrandOverride](#obrandoverride) - Customise a defined brand to automatically override `oBrandGet`.
 
 ### oBrandDefine
 
@@ -171,7 +171,7 @@ Retrieve a variable for a variant using `oBrandGet` and `$configure-for`.
 }
 ```
 
-Override variables using `oBrandGet` and `$override`. The override paramater accepts configuration to override brand configuration set with `oBrandDefine`, it expects the same configuration format.
+Override variables using `oBrandGet` and `$override-config`. The override paramater accepts configuration to override brand configuration set with `oBrandDefine`, it expects the same configuration format.
 
 Assuming variables `example-background: 'paper'`, `example-border-size: 1px`, `example-border-type: solid`, `example-border-color: grey` are defined using `oBrandDefine`:
 
@@ -184,8 +184,8 @@ $custom-config: (
 );
 
 .o-example {
-	background: oBrandGet($component: 'o-example', $variables: 'example-background', $override: $custom-config); // background: hotpink;
-	border: oBrandGet($component: 'o-example', $variables: ('example-border-size', 'example-border-type', 'example-border-color'), $override: $custom-config); // border: 2px solid grey;
+	background: oBrandGet($component: 'o-example', $variables: 'example-background', $override-config: $custom-config); // background: hotpink;
+	border: oBrandGet($component: 'o-example', $variables: ('example-border-size', 'example-border-type', 'example-border-color'), $override-config: $custom-config); // border: 2px solid grey;
 }
 ```
 

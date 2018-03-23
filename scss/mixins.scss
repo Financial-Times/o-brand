@@ -124,21 +124,21 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
 /// @param {string} $component
 /// @param {string | list} $variables
 /// @param {string | list} $configure-for Get a variable for a specific variant, disregard any configured variant (`oBrandConfigureFor`).
-/// @param {map} $override Configuration to override defined brand configuration. Expects the same as the `oBrandDefine` `$config` argument.
+/// @param {map} $override-config Configuration to override defined brand configuration. Expects the same as the `oBrandDefine` `$config` argument.
 /// @return {string | number | color | null}
-@function oBrandGet($variables, $component: $_o-brand-current-component, $configure-for: $_o-brand-current-variant, $override: $_o-brand-current-override) {
+@function oBrandGet($variables, $component: $_o-brand-current-component, $configure-for: $_o-brand-current-variant, $override-config: $_o-brand-current-override) {
     // For one variable return value.
     @if $component == null {
         @error 'Can not get variable "#{variables}" as the component is not configured. Use `oBrandConfigureFor` or pass a `$component` argument.';
     }
-    @if $override and type-of($override) != 'map' {
+    @if $override-config and type-of($override-config) != 'map' {
         @error '`oBrandGet` expects "$override" to be of type map but was of type "#{type-of($override)}": "#{$override}".';
     }
     // Override config.
     $brand: if($o-brand, $o-brand, $_o-brand-default);
     $original-config: _oBrandGetConfig($component, $brand);
-    @if $override {
-        $result: _oBrandUpdateConfig($component, $brand, $override);
+    @if $override-config {
+        $result: _oBrandUpdateConfig($component, $brand, $override-config);
     }
     // Concatenate multiple requested variables for use in one property.
     $values: null;
@@ -151,7 +151,7 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
         }
     }
     // Restore original config.
-    @if $override {
+    @if $override-config {
         $result: _oBrandRestoreConfig($component, $brand, $original-config);
     }
     @return $values;
