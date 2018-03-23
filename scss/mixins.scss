@@ -129,7 +129,7 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
 @function oBrandGet($variables, $component: $_o-brand-current-component, $configure-for: $_o-brand-current-variant, $override-config: $_o-brand-current-override) {
    // Ignore a null `$configure-for` variant.
     @if $configure-for == null {
-        $configure-for: $_o-brand-current-variant
+        $configure-for: $_o-brand-current-variant;
     }
     // For one variable return value.
     @if $component == null {
