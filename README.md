@@ -27,7 +27,7 @@ Brands include:
 
 ### Variant
 
-A variant is an addition or modification to a component withi a given brand. A variant may also alter the appearance and/or functionality of a component. Variants must be optional and build upon a fully functional component.
+A variant is an addition or modification to a component within a given brand. A variant may also alter the appearance and/or functionality of a component. Variants must be optional and build upon a fully functional component.
 
 E.g. A button component may have an "inverse" variant, a "big" variant, etc. A header component may have a "subnav" variant, a "sticky" variant, etc.
 
@@ -47,6 +47,7 @@ The following mixins and functions help brand a component.
 
 - [oBrandDefine](#obranddefine) - Define brand configuration (variables & supported variants).
 - [oBrandGet](#obrandget) - Retrieve brand variables.
+- [oBrandSupportsVariant](#obrandsupportsvariant) - Check if the brand supports a variant.
 
 ### oBrandDefine
 
@@ -54,12 +55,12 @@ A component defines configuration for each of its supported brands. The default 
 
 Brand configuration comprises of variables and supported variants. As explained below.
 - [`variables`](#brand-variables)
-- [`supported-variants`](#supported-variants)
+- [`supports-variants`](#supports-variants)
 
 ```scss
 @include oBrandDefine($component: 'o-example', $brand: 'master', (
     'variables': $variables,
-    'supported-variants': $supported-variants
+    'supports-variants': $supports-variants
 ));
 ```
 
@@ -104,7 +105,7 @@ These ensures support for a variant which sets no variables can be determined.
 
 #### A Complete `oBrandDefine` Example
 
-The below example defines a `master` brand for the component `o-example`. We define four variables including `example-background`, but we provide is a different `example-background` value for the `inverse` and `b2b` variants. Using the `supports-variants` map we explicitly state the `master` brand supports both of these variants.
+The below example defines a `master` brand for the component `o-example`. We define four variables including `example-background`, but we provide a different `example-background` value for the `inverse` and `b2b` variants. Using the `supports-variants` map we explicitly state the `master` brand supports both of these variants.
 
 ```scss
 @include oBrandDefine('o-example', 'master', (
@@ -166,6 +167,19 @@ $custom-variant: (
 ```
 
 - `oBrandGet` returns `null` if a variable is undefined. Sass removes css properties which are set to `null`. This is a useful feature to conditionally output css properties for different variants.
+
+## oBrandSupportsVariant
+
+To check if a brand supports a variant call `oBrandSupportsVariant`.
+
+E.g. only output the `inverse` variant if the brand supports it:
+```scss
+@if oBrandSupportsVariant($component: 'o-example', $variant: 'inverse') {
+	.o-example--inverse {
+		background: oBrandGet($component: 'o-example', $variables: 'example-background', $from: 'inverse'); // background: slate;
+	}
+}
+```
 
 ### Debug Mode
 

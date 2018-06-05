@@ -245,7 +245,7 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
     $variables: map-get($config, 'variables');
     $supports-variants: if(map-get($config, 'settings'), map-get($config, 'settings'), map-get($config, 'supports-variants'));
     @if map-get($config, 'settings') and $o-brand-debug-mode {
-        @warn 'Defining brands with "settings" is deprecated. Use "supported-variants" instead for component "#{$component}" and brand "#{$brand}".';
+        @warn 'Defining brands with "settings" is deprecated. Use "supports-variants" instead for component "#{$component}" and brand "#{$brand}".';
     }
     // Ensure a variant list is alphabetical.
     $sorted-variables: ();
