@@ -244,6 +244,9 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
     $valid: _oBrandValidateConfig($component, $brand, $config);
     $variables: map-get($config, 'variables');
     $supports-variants: if(map-get($config, 'settings'), map-get($config, 'settings'), map-get($config, 'supports-variants'));
+    @if map-get($config, 'settings') and $o-brand-debug-mode {
+        @warn 'Defining brands with "settings" is deprecated. Use "supported-variants" instead for component "#{$component}" and brand "#{$brand}".';
+    }
     // Ensure a variant list is alphabetical.
     $sorted-variables: ();
     @each $key, $value in $variables {
@@ -381,11 +384,6 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
     }
     // Variables for the current brand and variant found.
     @if type-of($variables) == 'map' {
-        // Check the requested variable is defined.
-        @if map-has-key($variables, $variable) == false and $o-brand-debug-mode == true {
-            @warn 'The "#{$variable}" variable is not defined for the ' + if(length($variant) > 0, 'variant "#{$variant}" of ', '') + 'the "#{$o-brand}" brand.';
-            @return null;
-        }
         // Get the defined value and validate it can be used as a CSS property.
         // Boolean variant and feature toggles are configured seperately.
         $value: map-get($variables, $variable);
