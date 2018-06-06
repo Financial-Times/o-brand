@@ -3,6 +3,7 @@ $o-brand-debug-mode: false !default; // Show extra (optional) warnings. E.g. val
 $_o-brand-default: 'master'; // The fallback current brand. Allows us to check if o-brand is set explicitly.
 $_o-brands: () !default; // A map of components to their defined brands.
 $_o-brand-default-not-set-warning: false !default; // Has the default not set warning been output.
+$_o-brand-define-readme: "https://github.com/Financial-Times/o-brand/#obranddefine";
 
 /// Define component configuration for a brand.
 ///
@@ -141,15 +142,16 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
 /// @param {map} $config
 /// @return {map}
 @function _oBrandValidateConfig($component, $brand, $config) {
-    $errorMessage: '"#{$component}" configuration for brand "#{$brand}" is invalid';
+    $error-message: '"#{$component}" configuration for brand "#{$brand}" is invalid';
+    $error-message-link: 'Example brand configuration can be seen in the readme: #{$_o-brand-define-readme}';
     @if type-of($config) != 'map' {
-        @error '#{$errorMessage}. Its configuration must be a map.';
+        @error '#{$error-message}. Its configuration must be a map. #{$error-message-link}';
     }
     // Validate variables key (an empty map is of type list).
     $variables: map-get($config, 'variables');
     $supports-variants: map-get($config, 'supports-variants');
     @if $variables and (type-of($variables) != 'map' and type-of($variables) != 'list' ) {
-        @error '#{$errorMessage}. Config key "variables" should be a map but is of type #{type-of($variables)}.';
+        @error '#{$error-message}. Config key "variables" should be a map but is of type #{type-of($variables)}. #{$error-message-link}';
     }
     // Validate default variable names.
     @if type-of($variables) == 'map' {
@@ -183,7 +185,7 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
     }
     // Validate supports variants key.
     @if $supports-variants and type-of($supports-variants) != 'list' and type-of($supports-variants) != 'string' {
-        @error '#{$errorMessage}. Config key "#{$supports-variants}" should be a list but is of type #{type-of($supports-variants)}.';
+        @error '#{$error-message}. Config key "#{$supports-variants}" should be a list but is of type #{type-of($supports-variants)}. #{$error-message-link}';
     }
     // Check variant names within supports variants.
     @each $variant-name in $supports-variants {
