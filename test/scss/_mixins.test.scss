@@ -71,6 +71,16 @@
         $property: oBrandGet($component: 'o-example', $variables: 'example-background', $from: 'compact');
         @include assert-equal($property, null);
     }
+
+    @include test('Gets variables from the default "master" brand if the current brand is not defined.') {
+        // Set fake brand.
+        $original-brand: $o-brand;
+        $o-brand: 'non-existent-brand' !global;
+        $property: oBrandGet($component: 'o-example', $variables: 'example-background');
+        @include assert-equal($property, pink);
+        // Restore brand after test.
+        $o-brand: $original-brand !global;
+    }
 }
 
 @include test-module('oBrandSupportsVariant') {
