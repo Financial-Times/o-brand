@@ -6,8 +6,8 @@ $o-brand: 'internal';
 		example-background: pink
 	),
 	'supports-variants': (
-		'stripe': true,
-		'compact': true
+		'stripe',
+		'compact'
 	)
 ));
 
@@ -26,20 +26,20 @@ $o-brand: 'internal';
         'b2b': (
 		    example-background: red
         ),
-        ('inverse', 'b2b'): (
+        'inverse-b2b': (
 		    example-background: darkred
         )
 	),
 	'supports-variants': (
-		'compact': true,
-		'inverse': true,
-		'b2b': true
+		'compact',
+		'inverse',
+		'b2b'
 	)
 ));
 
 @include oBrandDefine('o-example', 'whitelabel', (
 	'supports-variants': (
-		'compact': true
+		'compact'
 	)
 ));
 
@@ -55,8 +55,8 @@ $o-brand: 'internal';
 		)
 	),
 	'supports-variants': (
-		'small': true,
-		'large': true
+		'small',
+		'large'
 	)
 ));
 
@@ -68,6 +68,6 @@ $o-brand: 'internal';
 		)
 	),
 	'supports-variants': (
-		'small': true
+		'small'
 	)
 ));
