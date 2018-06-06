@@ -17,9 +17,15 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
     @if type-of($brand) != 'string' or $brand == '' {
         @error 'Could not set brand "#{$brand}" for component "#{$component}". A brand of type string must be given.';
     }
-    // Define brand configuration.
-    @if not _oBrandIsDefined($component, $brand) {
-        $result: _oBrandUpdateConfig($component, $brand, $config);
+    // Do not allow a component brand to be overridden.
+    @if _oBrandIsDefined($component, $brand) {
+        @error 'Brand #{$brand} is already defined for #{$component}.';
+    }
+    // Validate config
+    $valid: _oBrandValidateConfig($component, $brand, $config);
+    // Update config.
+    @if $valid {
+        $_o-brands: _oBrandRecursiveMapMerge($_o-brands, ($component: ($brand: $config))) !global;
     }
 }
 
@@ -80,20 +86,35 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
     @return $values;
 }
 
-
-/// Updates config for a given component and brand using a recursive merge.
+/// Check if the brand supports a variant.
 ///
-/// @access private
+/// @example scss
+///     oBrandSupportsVariant($component: 'o-component', $variant: 'breadcrumbs');
+///     oBrandSupportsVariant($component: 'o-component', $variant: 'inverse');
+///
+/// @access public
 /// @param {string} $component
-/// @param {string} $brand
-/// @param {map} $config
-/// @return {map}
-@function _oBrandUpdateConfig($component, $brand, $config) {
-    // Validate config
-    $valid: _oBrandValidateConfig($component, $brand, $config);
-    // Update config.
-    $_o-brands: _oBrandRecursiveMapMerge($_o-brands, ($component: ($brand: $config))) !global;
-    @return $_o-brands;
+/// @param {string} $variant
+/// @return {boolean}
+@function oBrandSupportsVariant($component, $variant) {
+    // A custom or null variant is always supported.
+    @if type-of($variant) == 'map' and type-of($variant) == 'null' {
+        @return true;
+    }
+    // Check support for a pre-defined variant.
+    @if type-of($variant) != 'string' {
+        @error 'Cound not check support for variant "#{$variant}", expecting a string, map, or null but found "#{type-of($variant)}".';
+    }
+    // Get supported variants.
+    $brand: _oBrandGetCurrentBrand();
+    $brand-config: _oBrandGetConfig($component, $o-brand);
+    $supports-variants: map-get($brand-config, 'supports-variants');
+    // No variants are supported.
+    @if type-of($supports-variants) != 'map' {
+        @return false;
+    }
+    // Check if variant is supported.
+    @return if(map-get($supports-variants, $variant), true, false);
 }
 
 /// Validate config.
@@ -121,44 +142,22 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
 }
 
 /// Check the brand is configured.
-/// By default checks the default brand is configured.
-/// The default brand must be configured by the component as it is the fallback.
 ///
 /// @access private
 /// @param {string} $component
 /// @param {string} $brand
 /// @return {boolean}
-@function _oBrandIsDefined($component, $brand: $_o-brand-default) {
+@function _oBrandIsDefined($component, $brand) {
     $component-brands: map-get($_o-brands, $component);
     $component-brands: if(type-of($component-brands) == 'map', $component-brands, ());
     @return type-of(map-get($component-brands, $brand)) == 'map';
 }
 
-/// Check if the brand supports a variant.
-///
-/// @access public
-/// @param {string} $component
-/// @param {string} $variant
-/// @return {boolean}
-@function oBrandSupportsVariant($component, $variant) {
-    // A custom or null variant is always supported.
-    @if type-of($variant) == 'map' and type-of($variant) == 'null' {
-        @return true;
-    }
-    // Check support for a pre-defined variant.
-    @if type-of($variant) != 'string' {
-        @error 'Cound not check support for variant "#{$variant}", expecting a string, map, or null but found "#{type-of($variant)}".';
-    }
-    // Get supported variants.
-    $brand: if($o-brand, $o-brand, $_o-brand-default);
-    $brand-config: _oBrandGetConfig($component, $o-brand);
-    $supports-variants: map-get($brand-config, 'supports-variants');
-    // No variants are supported.
-    @if type-of($supports-variants) != 'map' {
-        @return false;
-    }
-    // Check if variant is supported.
-    @return if(map-get($supports-variants, $variant), true, false);
+/// Get the currently configured brand.
+/// @return {string}
+/// @access private
+@function _oBrandGetCurrentBrand() {
+    @return if($o-brand, $o-brand, $_o-brand-default);
 }
 
 /// Get all config for a given component and brand.
@@ -173,7 +172,7 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
     $component-brands: if(type-of($component-brands) == 'map', $component-brands, ());
     $brand-config: map-get($component-brands, $brand);
     // The default brand must be configured before o-brand can be used.
-    @if not _oBrandIsDefined($component) {
+    @if not _oBrandIsDefined($component, $_o-brand-default) {
         @error 'The default brand "#{$_o-brand-default}" must be defined for "#{$component}" before using o-brand.';
     }
     // Validate the requested brand is configured, fallback to the default brand otherwise.
@@ -185,86 +184,6 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
         @return _oBrandGetConfig($component, $_o-brand-default);
     }
     @return $brand-config;
-}
-
-
-/// Ensure variants are expressed consistently,
-/// so they may be compared and matched.
-///
-/// Only effects compound variants:
-/// - Makes a variant list alphabetical.
-/// - Makes a variant list have a comma list separator.
-///
-/// @access private
-/// @param {list|string} $variant The variant to normalise.
-/// @return {list|string}
-@function _oBrandNormaliseVariant($variant) {
-    @if type-of($variant) != 'list' {
-        @return $variant;
-    }
-    // Compound variant is expressed in order.
-    $variant: _oBrandQuickSort($variant);
-    // List separator is consistent.
-    $variant: join($variant, (), 'comma');
-    @return $variant;
-}
-
-
-/// Quick sort alphanumeric list.
-///
-/// @access private
-/// @param {list} $list The list to sort.
-/// @return {list}
-@function _oBrandQuickSort($list) {
-    // sass-lint:disable variable-name-format
-    $less: ();
-    $equal: ();
-    $large: ();
-    @if length($list) > 1 {
-        $seed: nth($list, ceil(length($list) / 2));
-        @each $item in $list {
-            @if $item == $seed {
-                $equal: append($equal, $item);
-            } @else if _oBrandStringCompare($item, $seed) {
-                $less: append($less, $item);
-            } @else if not _oBrandStringCompare($item, $seed) {
-                $large: append($large, $item);
-            }
-        }
-        @return join(join(_oBrandQuickSort($less), $equal), _oBrandQuickSort($large), list-separator($list));
-    }
-    @return $list;
-    // sass-lint:enable variable-name-format
-}
-
-/// Compares two strings to determine which comes first.
-/// Sort order defined in an alphanumeric list.
-///
-/// @access private
-/// @param {string} $string-a
-/// @param {string} $string-b
-/// @return {list}
-@function _oBrandStringCompare($string-a, $string-b) {
-    // sass-lint:disable variable-name-format
-    $character-order: ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
-    @if type-of($string-a) == 'number' and type-of($string-b) == 'number' {
-        @return $string-a < $string-b;
-    }
-
-    $string-a: to-lower-case($string-a + unquote(''));
-    $string-b: to-lower-case($string-b + unquote(''));
-
-    @for $i from 1 through min(str-length($string-a), str-length($string-b)) {
-        $character-a: str-slice($string-a, $i, $i);
-        $character-b: str-slice($string-b, $i, $i);
-
-        @if $character-a and $character-b and index($character-order, $character-a) != index($character-order, $character-b) {
-            @return index($character-order, $character-a) < index($character-order, $character-b);
-        }
-    }
-
-    @return str-length($string-a) < str-length($string-b);
-    // sass-lint:enable variable-name-format
 }
 
 /// Merge config maps recursively.
