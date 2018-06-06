@@ -55,7 +55,7 @@ A component defines configuration for each of its supported brands. The default 
 
 Brand configuration comprises of variables and supported variants. As explained below.
 - [`variables`](#brand-variables)
-- [`Supported Variants`](#supported-variants)
+- [`supported variants`](#supported-variants)
 
 ```scss
 @include oBrandDefine($component: 'o-example', $brand: 'master', (
