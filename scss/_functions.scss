@@ -37,6 +37,11 @@
 	}
 	// If from default component variables or a pre-defined variant.
 	@if type-of($from) == 'string' or type-of($from) == 'null' {
+		// A brand must be configured before o-brand can be used.
+		@if not _oBrandIsDefined($o-brand) {
+			@return _oBrandError('The brand "#{$o-brand}" is not supported by o-brand. Please use one of #{$_o-brand-available-brands}.');
+		}
+
 		$brand-config: _oBrandGetConfig($component, $o-brand);
 		$brand-variables: map-get($brand-config, 'variables');
 		@if type-of($from) == 'null' {
@@ -179,19 +184,12 @@
 	@return true;
 }
 
-/// Check the brand is configured.
+/// Check the brand is available
 ///
 /// @access private
-/// @param {string} $component
 /// @param {string} $brand
-/// @return {boolean}
-
-// @function _oBrandIsDefined($component, $brand) {
-//     $component-brands: map-get($_o-brands, $component);
-//     $component-brands: if(type-of($component-brands) == 'map', $component-brands, ());
-//     @return type-of(map-get($component-brands, $brand)) == 'map';
-// }
-
+/// @return {null|integer}
+///
 @function _oBrandIsDefined($brand) {
 	@return index($_o-brand-available-brands, $brand);
 }
@@ -200,7 +198,7 @@
 /// @return {string}
 /// @access private
 @function _oBrandGetCurrentBrand() {
-    @return if($o-brand, $o-brand, $_o-brand-default);
+	@return if($o-brand, $o-brand, $_o-brand-default);
 }
 
 /// Get all config for a given component and brand.
@@ -211,23 +209,20 @@
 /// @return {map}
 
 @function _oBrandGetConfig($component, $brand) {
-    // Get config for the brand.
-    $component-brands: map-get($_o-brands, $component);
-    $component-brands: if(type-of($component-brands) == 'map', $component-brands, ());
-    $brand-config: map-get($component-brands, $brand);
-    // A brand must be configured before o-brand can be used.
-    @if not _oBrandIsDefined($brand) {
-        @return _oBrandError('The brand "#{$brand}" is not supported by o-brand. Please use one of #{$_o-brand-available-brands}.');
-    }
-    // Validate the requested brand is configured, fallback to the default brand otherwise.
-    @if $brand-config == null {
-        @if not $_o-brand-default-not-set-warning and $o-brand-debug-mode == true {
-            $_o-brand-default-not-set-warning: true !global;
-            @warn 'The requested brand "#{$brand}" has not been set. Using "#{$_o-brand-default}" brand instead.';
-        }
-        @return _oBrandGetConfig($component, $_o-brand-default);
-    }
-    @return $brand-config;
+		// Get config for the brand.
+		$component-brands: map-get($_o-brands, $component);
+		$component-brands: if(type-of($component-brands) == 'map', $component-brands, ());
+		$brand-config: map-get($component-brands, $brand);
+
+		// Validate the requested brand is configured, fallback to the default brand otherwise.
+		@if $brand-config == null {
+			@if not $_o-brand-default-not-set-warning and $o-brand-debug-mode == true {
+				$_o-brand-default-not-set-warning: true !global;
+				@warn 'The requested brand "#{$brand}" has not been set. Using "#{$_o-brand-default}" brand instead.';
+			}
+			@return _oBrandGetConfig($component, $_o-brand-default);
+		}
+		@return $brand-config;
 }
 
 /// Merge config maps recursively.
@@ -236,20 +231,20 @@
 /// @acess private
 /// @link https://github.com/pentzzsolt/sass-recursive-map-merge/
 @function _oBrandRecursiveMapMerge($map1, $map2) {
-    @if ((type-of($map1) == map or type-of($map1) == list) and (type-of($map2) == map or type-of($map2) == list)) {
-        $result: $map1;
-        @each $key, $value in $map2 {
-            @if (type-of(map-get($result, $key)) == map and type-of($value) == map) {
-                $result: map-merge($result, ($key: _oBrandRecursiveMapMerge(map-get($result, $key), $value)));
-            } @else {
-                $result: map-merge($result, ($key: $value));
-            }
-        }
-        @return $result;
-    } @else {
-        @warn '_oBrandRecursiveMapMerge() expects it\'s parameters to be of type "map".';
-        @return null;
-    }
+	@if ((type-of($map1) == map or type-of($map1) == list) and (type-of($map2) == map or type-of($map2) == list)) {
+		$result: $map1;
+		@each $key, $value in $map2 {
+			@if (type-of(map-get($result, $key)) == map and type-of($value) == map) {
+				$result: map-merge($result, ($key: _oBrandRecursiveMapMerge(map-get($result, $key), $value)));
+			} @else {
+				$result: map-merge($result, ($key: $value));
+			}
+		}
+		@return $result;
+	} @else {
+		@warn '_oBrandRecursiveMapMerge() expects it\'s parameters to be of type "map".';
+		@return null;
+	}
 }
 
 /// Check a string is a valid `o-brand` name and error if not.
@@ -262,24 +257,24 @@
 /// @param {string} $name The name to validate
 /// @param {string} $error-context E.g. "Unable to define brand"
 @function _oBrandValidateName($thing, $name, $error-context: '') {
-    // Strings only.
-    @if type-of($name) != 'string' {
-        @return _oBrandError('#{$error-context}. #{$thing} "#{$name}" is invalid. #{$thing} names must be a string.');
-    }
-    // No empty strings.
-    @if $name == '' {
-        @return _oBrandError('#{$error-context}. #{$thing} "#{$name}" is invalid. #{$thing} names can not be an empty string.');
-    }
-    // Valid characters only.
-    $valid-characters: ('-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
-    @for $character-index from 1 through str-length($name) {
-        $character: str-slice($name, $character-index, $character-index);
-        @if $character == " " {
-            @return _oBrandError('#{$error-context}. #{$thing} "#{$name}" is invalid. #{$thing} names can not contain spaces.');
-        }
-        @if not index($valid-characters, $character) {
-            @return _oBrandError('#{$error-context}. #{$thing} "#{$name}" is invalid. #{$thing} names can only contain lowercase alphanumeric characters and "-".');
-        }
-    }
-    @return true;
+	// Strings only.
+	@if type-of($name) != 'string' {
+		@return _oBrandError('#{$error-context}. #{$thing} "#{$name}" is invalid. #{$thing} names must be a string.');
+	}
+	// No empty strings.
+	@if $name == '' {
+		@return _oBrandError('#{$error-context}. #{$thing} "#{$name}" is invalid. #{$thing} names can not be an empty string.');
+	}
+	// Valid characters only.
+	$valid-characters: ('-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
+	@for $character-index from 1 through str-length($name) {
+		$character: str-slice($name, $character-index, $character-index);
+		@if $character == " " {
+			@return _oBrandError('#{$error-context}. #{$thing} "#{$name}" is invalid. #{$thing} names can not contain spaces.');
+		}
+		@if not index($valid-characters, $character) {
+			@return _oBrandError('#{$error-context}. #{$thing} "#{$name}" is invalid. #{$thing} names can only contain lowercase alphanumeric characters and "-".');
+		}
+	}
+	@return true;
 }
