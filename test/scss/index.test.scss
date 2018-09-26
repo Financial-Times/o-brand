@@ -6,3 +6,4 @@ $_test-environment: true;
 // Define brands before running tests.
 @import 'fixtures';
 @import 'mixins.test';
+@import 'functions.test';

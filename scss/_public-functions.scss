@@ -5,11 +5,13 @@
 /// @access public
 ///
 @function oBrandSetBrand() {
-	$o-brand: if((global-variable-exists(o-brand)), $o-brand, 'master') !global;
+	$brand: if((global-variable-exists(o-brand) and ($o-brand != null)), $o-brand, 'master') !global;
 
-	@if not _oBrandIsDefined($o-brand) {
-		@return _oBrandError('The brand "#{$o-brand}" is not supported by o-brand. Please use one of #{$_o-brand-available-brands}.');
+	@if not _oBrandIsDefined($brand) {
+		@return _oBrandError('The brand "#{$brand}" is not supported by o-brand. Please use one of #{$_o-brand-available-brands}.');
 	}
+
+	@return $brand;
 }
 
 /// Gets the value of a component variable for the current brand.
