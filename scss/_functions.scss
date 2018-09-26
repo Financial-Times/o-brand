@@ -191,6 +191,7 @@
 /// @return {null|integer}
 ///
 @function _oBrandIsDefined($brand) {
+	$brand: if($brand != '', $brand, $_o-brand-default);
 	@return index($_o-brand-available-brands, $brand);
 }
 

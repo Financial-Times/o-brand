@@ -78,12 +78,23 @@
 		@include assert-equal($property, null);
 	}
 
-	@include test('Gets variables from the default "master" brand if the current brand is not defined.') {
+	@include test('Throws error if a brand that is not master, internal or whitelabel is defined.') {
 		// Set fake brand.
 		$original-brand: $o-brand;
 		$o-brand: 'non-existent-brand' !global;
+		$error: 'o-brand error: The brand "non-existent-brand" is not supported by o-brand. Please use one of master, internal, whitelabel.';
 		$property: oBrandGet($component: 'o-example', $variables: 'example-background');
-		// @include assert-equal($property, $_o-brand-error);
+		@include assert-equal($property, $error);
+		// Restore brand after test.
+		$o-brand: $original-brand !global;
+	}
+
+	@include test('Defaults to master if no brand is defined.') {
+		// Set fake brand.
+		$original-brand: $o-brand;
+		$o-brand: '' !global;
+		$property: oBrandGet($component: 'o-example', $variables: 'example-background');
+		@include assert-equal($property, pink);
 		// Restore brand after test.
 		$o-brand: $original-brand !global;
 	}
