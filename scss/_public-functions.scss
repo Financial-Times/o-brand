@@ -5,7 +5,7 @@
 /// @access public
 ///
 @function oBrandSetBrand() {
-	$brand: if((global-variable-exists(o-brand) and ($o-brand != null)), $o-brand, 'master') !global;
+	$brand: _oBrandGetCurrentBrand();
 
 	@if not _oBrandIsDefined($brand) {
 		@return _oBrandError('The brand "#{$brand}" is not supported by o-brand. Please use one of #{$_o-brand-available-brands}.');
