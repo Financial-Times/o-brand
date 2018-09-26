@@ -76,7 +76,7 @@
 /// @param {string} $brand
 /// @return {null|integer}
 ///
-@function _oBrandIsDefined($brand) {
+@function _oBrandIsAccepted($brand) {
 	@return index($_o-brand-available-brands, $brand);
 }
 
