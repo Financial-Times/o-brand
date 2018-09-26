@@ -1,7 +1,7 @@
 o-brand [![Circle CI](https://circleci.com/gh/Financial-Times/o-brand/tree/master.svg?style=svg)](https://circleci.com/gh/Financial-Times/o-brand/tree/master)
 =================
 
-Tools to tailor Origami components for distinct usecases.
+Tools to tailor Origami components for distinct use cases.
 
 **&#x26A0;&#xFE0F; Non-Origami projects must not depend on `o-brand` directly.**
 
@@ -17,7 +17,7 @@ Tools to tailor Origami components for distinct usecases.
 
 ### Brand
 
-A brand represents an enviroment which requires components to offer a distinct appearence or unique functionality.
+A brand represents an environment which requires components to offer a distinct appearance or unique functionality.
 
 Brands include:
 
@@ -45,9 +45,31 @@ Mixins within `o-brand` help configure components to support brands. There is no
 
 The following mixins and functions help brand a component.
 
+- [oBrandSetBrand](#oBrandSetBrand) - Set a default brand if necessary
 - [oBrandDefine](#obranddefine) - Define brand configuration (variables & supported variants).
 - [oBrandGet](#obrandget) - Retrieve brand variables.
 - [oBrandSupportsVariant](#obrandsupportsvariant) - Check if the brand supports a variant.
+
+### oBrandSetBrand
+
+Certain components only require one brand to be defined, and all other components only need to define one brand at a time.
+
+In order to allow conditional configuration, this function is used to carry forward a parent brand, or set a default brand in case none has been defined.
+If a brand that is not supported by `o-brand` has been set, this function will throw an error. It will run in `oBrandDefine` and `oBrandGet` as a safe guard.
+
+It should be set to the `$o-brand` variable, and should be the first function in a components brand configuration file.
+
+```scss
+$o-brand: oBrandSetBrand();
+
+@if $o-brand == 'master' {
+	oBrandDefine(...)
+} @elseif $o-brand == 'internal' {
+	oBrandDefine(...)
+} @elseif $o-brand == 'whitelabel' {
+	oBrandDefine(...)
+}
+```
 
 ### oBrandDefine
 

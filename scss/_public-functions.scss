@@ -53,7 +53,9 @@
 	}
 	// If from default component variables or a pre-defined variant.
 	@if type-of($from) == 'string' or type-of($from) == 'null' {
+
 		// A brand must be configured before o-brand can be used.
+		$o-brand: oBrandSetBrand();
 
 		$brand-config: _oBrandGetConfig($component, $o-brand);
 		$brand-variables: map-get($brand-config, 'variables');

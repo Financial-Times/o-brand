@@ -6,6 +6,7 @@
 /// @param {string} $brand
 /// @param {map} $config
 /// @return {map}
+///
 @function _oBrandValidateConfig($component, $brand, $config) {
 	$error-message: '"#{$component}" configuration for brand "#{$brand}" is invalid';
 	$error-message-link: 'Example brand configuration can be seen in the readme: #{$_o-brand-define-readme}';
@@ -142,6 +143,7 @@
 /// @param {string} $name The name to validate
 /// @param {string} $error-context E.g. "Unable to define brand"
 @function _oBrandValidateName($thing, $name, $error-context: '') {
+	$name: oBrandSetBrand();
 	// Strings only.
 	@if type-of($name) != 'string' {
 		@return _oBrandError('#{$error-context}. #{$thing} "#{$name}" is invalid. #{$thing} names must be a string.');
