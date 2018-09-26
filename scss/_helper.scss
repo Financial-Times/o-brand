@@ -1,8 +1,0 @@
-/// Allows for errors to be tested in dev environments
-@function _oBrandError($message, $override: $_test-environment) {
-	@if $override {
-		@return 'o-brand error: #{$message}';
-	}
-
-	@error('#{$message}');
-};
