@@ -4,10 +4,10 @@
 ///
 /// @access public
 ///
-@function oBrandSetBrand() {
-	$brand: _oBrandGetCurrentBrand();
+@function oBrandGetCurrentBrand() {
+	$brand: if($o-brand, $o-brand, $_o-brand-default);
 
-	@if not _oBrandIsAccepted($brand) {
+	@if not index($_o-brand-available-brands, $brand) {
 		@return _oBrandError('The brand "#{$brand}" is not supported by o-brand. Please use one of #{$_o-brand-available-brands}.');
 	}
 
@@ -55,7 +55,7 @@
 	@if type-of($from) == 'string' or type-of($from) == 'null' {
 
 		// A brand must be configured before o-brand can be used.
-		$o-brand: oBrandSetBrand();
+		$o-brand: oBrandGetCurrentBrand();
 
 		$brand-config: _oBrandGetConfig($component, $o-brand);
 		$brand-variables: map-get($brand-config, 'variables');

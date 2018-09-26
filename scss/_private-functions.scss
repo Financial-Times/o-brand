@@ -70,23 +70,6 @@
 	@return true;
 }
 
-/// Check the brand is available
-///
-/// @access private
-/// @param {string} $brand
-/// @return {null|integer}
-///
-@function _oBrandIsAccepted($brand) {
-	@return index($_o-brand-available-brands, $brand);
-}
-
-/// Get the currently configured brand.
-/// @return {string}
-/// @access private
-@function _oBrandGetCurrentBrand() {
-	@return if($o-brand, $o-brand, $_o-brand-default);
-}
-
 /// Get all config for a given component and brand.
 ///
 /// @access private
@@ -140,7 +123,7 @@
 /// @param {string} $name The name to validate
 /// @param {string} $error-context E.g. "Unable to define brand"
 @function _oBrandValidateName($thing, $name, $error-context: '') {
-	$name: oBrandSetBrand();
+	$name: oBrandGetCurrentBrand();
 	// Strings only.
 	@if type-of($name) != 'string' {
 		@return _oBrandError('#{$error-context}. #{$thing} "#{$name}" is invalid. #{$thing} names must be a string.');

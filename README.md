@@ -45,12 +45,12 @@ Mixins within `o-brand` help configure components to support brands. There is no
 
 The following mixins and functions help brand a component.
 
-- [oBrandSetBrand](#oBrandSetBrand) - Set a default brand if necessary
+- [oBrandGetCurrentBrand](#obrandgetcurrentbrand) - Set a default brand if necessary
 - [oBrandDefine](#obranddefine) - Define brand configuration (variables & supported variants).
 - [oBrandGet](#obrandget) - Retrieve brand variables.
 - [oBrandSupportsVariant](#obrandsupportsvariant) - Check if the brand supports a variant.
 
-### oBrandSetBrand
+### oBrandGetCurrentBrand
 
 Certain components only require one brand to be defined, and all other components only need to define one brand at a time.
 
@@ -60,7 +60,7 @@ If a brand that is not supported by `o-brand` has been set, this function will t
 If it is being used for conditional brand setting, as below, it should be set to the `$o-brand` variable, and should be the first function in a components brand configuration file.
 
 ```scss
-$o-brand: oBrandSetBrand();
+$o-brand: oBrandGetCurrentBrand();
 
 @if $o-brand == 'master' {
 	oBrandDefine(...)
