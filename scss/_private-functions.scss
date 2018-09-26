@@ -95,20 +95,17 @@
 /// @return {map}
 
 @function _oBrandGetConfig($component, $brand) {
-		// Get config for the brand.
-		$component-brands: map-get($_o-brands, $component);
-		$component-brands: if(type-of($component-brands) == 'map', $component-brands, ());
-		$brand-config: map-get($component-brands, $brand);
+	// Get config for the brand.
+	$component-brands: map-get($_o-brands, $component);
+	$component-brands: if(type-of($component-brands) == 'map', $component-brands, ());
+	$brand-config: map-get($component-brands, $brand);
 
-		// Validate the requested brand is configured, fallback to the default brand otherwise.
-		@if $brand-config == null {
-			@if not $_o-brand-default-not-set-warning and $o-brand-debug-mode == true {
-				$_o-brand-default-not-set-warning: true !global;
-				@warn 'The requested brand "#{$brand}" has not been set. Using "#{$_o-brand-default}" brand instead.';
-			}
-			@return _oBrandGetConfig($component, $_o-brand-default);
-		}
-		@return $brand-config;
+	// Validate the requested brand is configured, fallback to the default brand otherwise.
+	@if $brand-config == null {
+		@return _oBrandError('The requested brand "#{$brand}" has not been defined. Please define this brand before using it.');
+	}
+
+	@return $brand-config;
 }
 
 /// Merge config maps recursively.
