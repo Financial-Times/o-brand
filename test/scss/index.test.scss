@@ -2,7 +2,7 @@
 
 @import '../../main';
 
-$_test-environment: true;
+$_o-brand-test-environment: true;
 // Define brands before running tests.
 @import 'fixtures';
 @import 'mixins.test';

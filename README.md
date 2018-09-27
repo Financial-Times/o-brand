@@ -55,7 +55,7 @@ The following mixins and functions help brand a component.
 Certain components only require one brand to be defined, and all other components only need to define one brand at a time.
 
 In order to allow conditional configuration, this function is used to carry forward a parent brand, or set a default brand in case none has been defined.
-If a brand that is not supported by `o-brand` has been set, this function will throw an error. It will run in `oBrandDefine` and `oBrandGet` as a safe guard.
+If a brand that is not supported by `o-brand` has been set, this function will throw an error. It will run in `oBrandGet` as a safe guard.
 
 If it is being used for conditional brand setting, as below, it should be set to the `$o-brand` variable, and should be the first function in a components brand configuration file.
 

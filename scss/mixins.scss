@@ -13,7 +13,6 @@ $_o-brand-test-environment: false !default;
 /// @param {string} $brand
 /// @param {map} $config
 @mixin oBrandDefine($component, $brand, $config) {
-		$brand: oBrandGetCurrentBrand();
     // Validate brand name.
     $validated-brand-name: _oBrandValidateName('Brand', $brand, 'Cannot define brand "#{$brand}" for component "#{$component}"');
     // Validate component name.
@@ -122,6 +121,7 @@ $_o-brand-test-environment: false !default;
     );
     // Check support for a pre-defined variant.
     $brand: oBrandGetCurrentBrand();
+		@debug $brand;
     $brand-config: _oBrandGetConfig($component, $brand);
     $supports-variants: map-get($brand-config, 'supports-variants');
     @if type-of($supports-variants) == 'list' {
