@@ -4,7 +4,7 @@ $_o-brand-available-brands: ('master', 'internal', 'whitelabel'); // A list of a
 $_o-brand-default: 'master'; // The fallback current brand.
 $_o-brand-define-readme: "https://github.com/Financial-Times/o-brand/#obranddefine";
 
-$_test-environment: false !default;
+$_o-brand-test-environment: false !default;
 
 /// Define component configuration for a brand.
 ///
@@ -13,6 +13,7 @@ $_test-environment: false !default;
 /// @param {string} $brand
 /// @param {map} $config
 @mixin oBrandDefine($component, $brand, $config) {
+		$brand: oBrandGetCurrentBrand();
     // Validate brand name.
     $validated-brand-name: _oBrandValidateName('Brand', $brand, 'Cannot define brand "#{$brand}" for component "#{$component}"');
     // Validate component name.
@@ -62,8 +63,8 @@ $_test-environment: false !default;
     // If from default component variables or a pre-defined variant.
     @if type-of($from) == 'string' or type-of($from) == 'null' {
         // A brand must be configured before o-brand can be used.
-        $o-brand: oBrandGetCurrentBrand();
-        $brand-config: _oBrandGetConfig($component, $o-brand);
+        $brand: oBrandGetCurrentBrand();
+        $brand-config: _oBrandGetConfig($component, $brand);
         $brand-variables: map-get($brand-config, 'variables');
         @if type-of($from) == 'null' {
             // Get from default variables.
@@ -121,7 +122,7 @@ $_test-environment: false !default;
     );
     // Check support for a pre-defined variant.
     $brand: oBrandGetCurrentBrand();
-    $brand-config: _oBrandGetConfig($component, $o-brand);
+    $brand-config: _oBrandGetConfig($component, $brand);
     $supports-variants: map-get($brand-config, 'supports-variants');
     @if type-of($supports-variants) == 'list' {
         @return if(index($supports-variants, $variant), true, false);
@@ -231,7 +232,7 @@ $_test-environment: false !default;
     $component-brands: if(type-of($component-brands) == 'map', $component-brands, ());
     $brand-config: map-get($component-brands, $brand);
 
-    // Validate the requested brand is configured, fallback to the default brand otherwise.
+    // Validate the requested brand is configured, throw an error if not.
     @if $brand-config == null {
       @return _oBrandError('The requested brand "#{$brand}" has not been defined. Please define this brand before using it.');
     }
@@ -271,7 +272,6 @@ $_test-environment: false !default;
 /// @param {string} $name The name to validate
 /// @param {string} $error-context E.g. "Unable to define brand"
 @function _oBrandValidateName($thing, $name, $error-context: '') {
-    $name: oBrandGetCurrentBrand();
     // Strings only.
     @if type-of($name) != 'string' {
         @error '#{$error-context}. #{$thing} "#{$name}" is invalid. #{$thing} names must be a string.';
@@ -299,7 +299,7 @@ $_test-environment: false !default;
 /// @access private
 /// @param {string} $message Error message
 /// @param {boolean} $override whether or not to output an error or a string to compare against
-@function _oBrandError($message, $override: $_test-environment) {
+@function _oBrandError($message, $override: $_o-brand-test-environment) {
 	@if $override {
 		@return 'o-brand error: #{$message}';
 	}

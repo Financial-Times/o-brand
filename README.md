@@ -60,13 +60,13 @@ If a brand that is not supported by `o-brand` has been set, this function will t
 If it is being used for conditional brand setting, as below, it should be set to the `$o-brand` variable, and should be the first function in a components brand configuration file.
 
 ```scss
-$o-brand: oBrandGetCurrentBrand();
+$brand: oBrandGetCurrentBrand();
 
-@if $o-brand == 'master' {
+@if $brand == 'master' {
 	oBrandDefine(...)
-} @elseif $o-brand == 'internal' {
+} @elseif $brand == 'internal' {
 	oBrandDefine(...)
-} @elseif $o-brand == 'whitelabel' {
+} @elseif $brand == 'whitelabel' {
 	oBrandDefine(...)
 }
 ```
