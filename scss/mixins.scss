@@ -121,7 +121,6 @@ $_o-brand-test-environment: false !default;
     );
     // Check support for a pre-defined variant.
     $brand: oBrandGetCurrentBrand();
-		@debug $brand;
     $brand-config: _oBrandGetConfig($component, $brand);
     $supports-variants: map-get($brand-config, 'supports-variants');
     @if type-of($supports-variants) == 'list' {

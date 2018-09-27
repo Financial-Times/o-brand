@@ -202,12 +202,6 @@ E.g. only output the `inverse` variant if the brand supports it:
 }
 ```
 
-### Debug Mode
-
-Some warnings are not output by default but may be useful in certain circumstances.
-
-To output all warnings set debug mode to true: `$o-brand-debug-mode: true;`.
-
 ---
 
 ## Contact
