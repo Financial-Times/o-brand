@@ -1,4 +1,3 @@
-
 @include test-module('oBrandDefine') {
 	@include test('Adds new brand variables to a global map') {
 		// Reset defined brands for test.

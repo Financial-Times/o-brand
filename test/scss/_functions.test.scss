@@ -1,56 +1,25 @@
-@include test-module('oBrandDefine') {
-	@include test('Adds new brand variables to a global map') {
-		// Reset defined brands for test.
-		$original-brands: $_o-brands;
-		$_o-brands: () !global;
-		// Run test.
-		$component1-brandmaster: (
-			'variables': (
-			example: blue
-			),
-			'supports-variants': (
-			'test',
-			'example'
-			)
-		);
-		$component1-brandinternal: (
-			'variables': (
-			),
-			'supports-variants': (
-			'example'
-			)
-		);
-		$component2-brandmaster: (
-			'variables': (
-			other: red
-			),
-			'supports-variants': (
-			'thing'
-			)
-		);
-		$component2-brandinternal: (
-			'variables': (
-			other: white
-			),
-			'supports-variants': (
-			)
-		);
-		@include oBrandDefine('o-component1', 'master', $component1-brandmaster);
-		@include oBrandDefine('o-component1', 'internal', $component1-brandinternal);
-		@include oBrandDefine('o-component2', 'master', $component2-brandmaster);
-		@include oBrandDefine('o-component2', 'internal', $component2-brandinternal);
-		@include assert-equal(map-get($_o-brands, "o-component1"), (
-			'master': $component1-brandmaster,
-			'internal': $component1-brandinternal
-		));
-		@include assert-equal(map-get($_o-brands, "o-component2"), (
-			'master': $component2-brandmaster,
-			'internal': $component2-brandinternal
-		));
-		// Restore brands to pre-test state
-		$_o-brands: $original-brands !global;
+@include test-module('oBrandGetCurrentBrand') {
+	@include test('Throws error if a brand that is not master, internal or whitelabel is defined.') {
+		// Set fake brand.
+		$original-brand: $o-brand;
+		$o-brand: 'non-existent-brand' !global;
+		$error: 'o-brand error: The brand "non-existent-brand" is not supported by o-brand. Please use one of master, internal, whitelabel.';
+		$non-brand: oBrandGetCurrentBrand();
+		@include assert-equal($non-brand, $error);
+		// Restore brand after test.
+		$o-brand: $original-brand !global;
 	}
-}
+
+	@include test('Defaults to master if no brand is defined.') {
+		// Set fake brand.
+		$original-brand: $o-brand;
+		$o-brand: null !global;
+		$o-brand: oBrandGetCurrentBrand();
+		@include assert-equal($o-brand, master);
+		// Restore brand after test.
+		$o-brand: $original-brand !global;
+	}
+};
 
 @include test-module('oBrandGet') {
 	@include test('Gets a default variable value for a defined brand') {
