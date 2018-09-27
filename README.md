@@ -52,23 +52,21 @@ The following mixins and functions help brand a component.
 
 ### oBrandGetCurrentBrand
 
-Certain components only require one brand to be defined, and all other components only need to define one brand at a time.
+This function will return the brand defined at a product level, or can be used to set a brand to be used within a component.
 
-In order to allow conditional configuration, this function is used to carry forward a parent brand, or set a default brand in case none has been defined.
-If a brand that is not supported by `o-brand` has been set, this function will throw an error. It will run in `oBrandGet` as a safe guard.
-
-If it is being used for conditional brand setting, as below, it should be set to the `$o-brand` variable, and should be the first function in a components brand configuration file.
+If $o-brand has been previously defined, it can be used like this:
 
 ```scss
-$brand: oBrandGetCurrentBrand();
+$o-brand: internal //defined in the product using the component
 
-@if $brand == 'master' {
-	oBrandDefine(...)
-} @elseif $brand == 'internal' {
-	oBrandDefine(...)
-} @elseif $brand == 'whitelabel' {
-	oBrandDefine(...)
-}
+$chosen-brand: oBrandGetCurrentBrand(); //returns 'internal'
+```
+
+If it has not yet been defined, it will provide a default brand: master.
+```scss
+//$o-brand is undefined
+
+$chosen-brand: oBrandGetCurrentBrand(); //returns 'master'
 ```
 
 ### oBrandDefine
