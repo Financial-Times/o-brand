@@ -52,7 +52,7 @@ The following mixins and functions help brand a component.
 
 ### oBrandGetCurrentBrand
 
-This function will return the brand defined at a product level, or can be used to set a brand to be used within a component.
+This function will return the brand defined at a product level, or can be used to define a brand to be used within a component for conditional logic.
 
 If $o-brand has been previously defined, it can be used like this:
 
@@ -82,6 +82,17 @@ Brand configuration comprises of variables and supported variants. As explained 
     'variables': $variables,
     'supports-variants': $supports-variants
 ));
+```
+This can also be used in conjunction with `oBrandGetCurrentBrand` to define a component conditionally:
+```scss
+$chosen-brand: oBrandGetCurrentBrand();
+
+@if $chosen-brand == 'master' {
+	@include oBrandDefine($component: 'o-example', $brand: $chosen-brand, (
+		'variables': $variables,
+		'supports-variants': $supports-variants
+	));
+}
 ```
 
 #### Brand Variables
