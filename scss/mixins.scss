@@ -178,7 +178,7 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
         @error '`oBrandGet` expects "$override" to be of type map but was of type "#{type-of($override)}": "#{$override}".';
     }
     // Override config.
-    $brand: if($o-brand, $o-brand, $_o-brand-default);
+    $brand: oBrandGetCurrentBrand();
     @if $override-config {
         $result: _oBrandUpdateConfig($component, $brand, $override-config);
     }
@@ -199,6 +199,11 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
     @return $values;
 }
 
+/// Get current brand, either the brand specifced by the user or the default (master).
+/// @access public
+@function oBrandGetCurrentBrand() {
+    @return if($o-brand, $o-brand, $_o-brand-default);
+}
 
 // Update currently configured component and variant.
 // If a variant is already set for a component combine them.
@@ -344,7 +349,7 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
         @error 'Cound not check support for variant #{type-of($variant)} "#{$variant}", expecting a list or string.';
     }
     // Override config.
-    $brand: if($o-brand, $o-brand, $_o-brand-default);
+    $brand: oBrandGetCurrentBrand();
     $original-config: _oBrandGetConfig($component, $brand);
     @if $override {
         $result: _oBrandUpdateConfig($component, $brand, $override);

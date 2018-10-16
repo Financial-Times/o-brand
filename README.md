@@ -48,6 +48,7 @@ The following mixins and functions help brand a component.
 - [oBrandDefine](#obranddefine) - Define brand configuration (variables & supported variants).
 - [oBrandGet](#obrandget) - Retrieve brand variables.
 - [oBrandSupportsVariant](#obrandsupportsvariant) - Check if the brand supports a variant.
+- [oBrandGetCurrentBrand](#obrandsetcurrentbrand) - Get the chosen brand (defined at product level, or the default 'master' brand)
 
 ### oBrandDefine
 
