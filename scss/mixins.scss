@@ -56,7 +56,7 @@ $_o-brand-default-not-set-warning: false !default; // Has the default not set wa
     }
     // The default brand must be configured before o-brand can be used.
     @if not _oBrandIsDefined($component) {
-        @error 'The default brand "#{$_o-brand-default}" must be defined for "#{$component}" before using o-brand.';
+        @warn 'The default brand "#{$_o-brand-default}" must be defined for "#{$component}".';
     }
     // Validate variant.
     @if type-of($variant) != 'list' and type-of($variant) != 'string' and type-of($variant) != 'null' {
