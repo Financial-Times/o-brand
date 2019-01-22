@@ -51,3 +51,27 @@
 		$_o-brands: $original-brands !global;
 	}
 }
+
+@include test-module('oBrandCustomise') {
+	@include test('Modifies the whitelabel brand.') {
+		$origami-set-brand: $o-brand;
+		$o-brand: 'whitelabel' !global;
+		@include oBrandCustomise('o-example', (
+			'example-background': hotpink
+		));
+		$brand-config: map-get($_o-brands, "o-example");
+		$whitelabel-brand-config: map-get($brand-config, "whitelabel");
+		@debug $whitelabel-brand-config;
+		@include assert-equal($whitelabel-brand-config, (
+			'variables': (
+				example-background: hotpink, // example-background is not hotpink
+				example-header-background: black,
+			),
+			'supports-variants': (
+				'compact'
+			)
+		));
+		// Restore brand before test.
+		$o-brand: $origami-set-brand!global;
+	}
+}
