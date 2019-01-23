@@ -52,11 +52,11 @@
 	}
 }
 
-@include test-module('oBrandCustomise') {
+@include test-module('oBrandCustomize') {
 	@include test('Modifies the whitelabel brand.') {
 		$origami-set-brand: $o-brand;
 		$o-brand: 'whitelabel' !global;
-		@include oBrandCustomise('o-example', (
+		@include oBrandCustomize('o-example', (
 			'example-background': hotpink
 		));
 		$brand-config: map-get($_o-brands, "o-example");

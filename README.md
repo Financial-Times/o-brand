@@ -49,6 +49,7 @@ The following mixins and functions help brand a component.
 - [oBrandDefine](#obranddefine) - Define brand configuration (variables & supported variants).
 - [oBrandGet](#obrandget) - Retrieve brand variables.
 - [oBrandSupportsVariant](#obrandsupportsvariant) - Check if the brand supports a variant.
+- [oBrandCustomize](#obrandcustomize) - Update brand variables for a unique project.
 
 ### oBrandGetCurrentBrand
 
@@ -71,7 +72,7 @@ $chosen-brand: oBrandGetCurrentBrand(); //returns 'master'
 
 ### oBrandDefine
 
-A component defines configuration for each of its supported brands. The default brand `master` must be defined. To do that use the mixin `oBrandDefine`.
+A component defines configuration for each of its supported brands. To do that use the mixin `oBrandDefine`.
 
 Brand configuration comprises of variables and supported variants. As explained below.
 - [`variables`](#brand-variables)
@@ -211,6 +212,47 @@ E.g. only output the `inverse` variant if the brand supports it:
 		background: oBrandGet($component: 'o-example', $variables: 'example-background', $from: 'inverse'); // background: slate;
 	}
 }
+```
+
+### oBrandCustomize
+
+`oBrandCustomize` enables projects to customise brand variables which were configured with `oBrandDefine`. But each component must provide an adapter (wrap the brand mixin in their own mixin), as `o-brand` must not be used directly by projects.
+
+Currently only the `whitelabel` brand is allowed to be customised in this way.
+
+Example Component (o-example):
+```scss
+/// Create a component-specific mixin to wrap `oBrandCustomize`.
+@mixin oExampleCustomize($variables) {
+    @include oBrandCustomize('o-example', $variables);
+}
+
+// Define the whitelabel brand for the component.
+```scss
+@include oBrandDefine('o-example', 'whitelabel', (
+    'variables': (
+		example-background: white,
+		example-color: black,
+    ),
+    'supports-variants': ()
+));
+```
+
+Example Project:
+```scss
+$o-brand: 'whitelabel';
+@import 'o-typography/main';
+@import 'o-table/main';
+
+// Customise the example component.
+// Here we change the variable "example-background" from "white" to "lightblue".
+// The "example-color" variable has not been customised so remains "black".
+@include oExampleCustomize((
+    example-background: lightblue
+));
+
+// Output the example component CSS.
+@include oExample();
 ```
 
 ---
