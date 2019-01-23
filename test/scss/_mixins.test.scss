@@ -61,7 +61,6 @@
 		));
 		$brand-config: map-get($_o-brands, "o-example");
 		$whitelabel-brand-config: map-get($brand-config, "whitelabel");
-		@debug $whitelabel-brand-config;
 		@include assert-equal($whitelabel-brand-config, (
 			'variables': (
 				example-background: hotpink, // example-background is not hotpink
