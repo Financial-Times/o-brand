@@ -216,7 +216,7 @@ E.g. only output the `inverse` variant if the brand supports it:
 
 ### oBrandCustomize
 
-`oBrandCustomize` enables projects to modify brand variables which were configured by the component with `oBrandDefine`. But each component must provide an adapter (wrap the brand mixin in their own mixin), as `o-brand` must not be used directly by projects.
+`oBrandCustomize` enables projects to modify brand variables which were configured within a component using `oBrandDefine`. But each component must provide an adapter (wrap the brand mixin in their own mixin), as `o-brand` must not be used directly outside Origami components.
 
 Currently only the `whitelabel` brand is allowed to be customised in this way.
 
@@ -241,7 +241,6 @@ Example Component (o-example):
 Example Project:
 ```scss
 $o-brand: 'whitelabel';
-@import 'o-typography/main';
 @import 'o-table/main';
 
 // Customise the example component.
