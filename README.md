@@ -216,7 +216,7 @@ E.g. only output the `inverse` variant if the brand supports it:
 
 ### oBrandCustomize
 
-`oBrandCustomize` enables projects to customise brand variables which were configured with `oBrandDefine`. But each component must provide an adapter (wrap the brand mixin in their own mixin), as `o-brand` must not be used directly by projects.
+`oBrandCustomize` enables projects to modify brand variables which were configured by the component with `oBrandDefine`. But each component must provide an adapter (wrap the brand mixin in their own mixin), as `o-brand` must not be used directly by projects.
 
 Currently only the `whitelabel` brand is allowed to be customised in this way.
 
