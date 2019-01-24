@@ -63,7 +63,7 @@
 		$whitelabel-brand-config: map-get($brand-config, "whitelabel");
 		@include assert-equal($whitelabel-brand-config, (
 			'variables': (
-				example-background: hotpink, // example-background is not hotpink
+				example-background: hotpink, // example-background is now hotpink
 				example-header-background: black,
 			),
 			'supports-variants': (
