@@ -216,7 +216,7 @@ E.g. only output the `inverse` variant if the brand supports it:
 
 ### oBrandCustomize
 
-`oBrandCustomize` enables projects to modify brand variables which were configured within a component using `oBrandDefine`. But each component must provide an adapter (wrap the brand mixin in their own mixin), as `o-brand` must not be used directly outside Origami components.
+`oBrandCustomize` allows existing brand variables to be modified, so long as those variables have been defined with `oBrandDefine`. This customisation is component-specific, so a branded component must wrap `oBrandCustomize` within a mixin of its own, as `o-brand` must not be used directly outside Origami components.
 
 Currently only the `whitelabel` brand is allowed to be customised in this way.
 
