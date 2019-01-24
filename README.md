@@ -228,7 +228,6 @@ Example Component (o-example):
 }
 
 // Define the whitelabel brand for the component.
-```scss
 @include oBrandDefine('o-example', 'whitelabel', (
     'variables': (
 		example-background: white,
