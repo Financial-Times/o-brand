@@ -72,7 +72,7 @@ $chosen-brand: oBrandGetCurrentBrand(); //returns 'master'
 
 ### oBrandDefine
 
-A component defines configuration for each of its supported brands. To do that use the mixin `oBrandDefine`.
+Components are individually responsible for defining the configuration for each brand they support. In order to add configuration for a new brand, use the mixin `oBrandDefine`.
 
 Brand configuration comprises of variables and supported variants. As explained below.
 - [`variables`](#brand-variables)
