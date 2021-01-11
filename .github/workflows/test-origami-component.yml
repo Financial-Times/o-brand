@@ -9,7 +9,7 @@ jobs:
     - run: git fetch --prune --unshallow
     - uses: actions/setup-node@v2.1.4
       with:
-        node-version: 12.x
+        node-version: 15.x
     - run: npm install --only=dev
     - name: Repository name
       id: repo_name
