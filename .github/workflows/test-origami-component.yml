@@ -18,7 +18,8 @@ jobs:
       id: findPr
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-    - run: ./node_modules/.bin/origami-ci branch
+    - run: mkdir $HOME/npm
+    - run: npx origami-ci branch
       env:
         ORIGAMI_CI_NAME: ${{ steps.repo_name.outputs.REPO_NAME }}
         ORIGAMI_CI_VERSION: 0.0.0
