@@ -32,9 +32,6 @@
     "stylelint-config-origami-component": "^1.0.4",
     "typescript": "^4.0.5"
   },
-  "scripts": {
-    "build": "tsc src/**/*.js main.js --declaration --allowJs --emitDeclarationOnly --outDir types"
-  },
   "engines": {
     "npm": "^7"
   }
