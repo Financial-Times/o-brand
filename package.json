@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Tools to \"brand\" other Origami components.",
   "keywords": [],
-  "homepage": "https://github.com/Financial-Times/o-brand#readme",
+  "homepage": "https://registry.origami.ft.com/components/o-brand",
   "bugs": {
     "url": "https://github.com/Financial-Times/o-brand/issues"
   },
