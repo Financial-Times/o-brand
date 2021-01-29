@@ -20,7 +20,6 @@
     }
   },
   "browser": "./main.js",
-  "types": "./types/main.d.ts",
   "devDependencies": {
     "eslint": "^7.9.0",
     "eslint-config-origami-component": "^2.1.0",
