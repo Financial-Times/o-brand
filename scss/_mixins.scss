@@ -35,7 +35,7 @@
 		@error 'Could not customise "#{$component}". oBrandCustomize expects variables of type map but found "#{type-of($variables)}".';
 	}
 	@if map-get($variables, 'supports-variants') {
-		@error 'Could not customise "#{$component}". oBrandCustomize expects a map of brand variables to custmoise variants. It is not possible to add or remove support for variants.';
+		@error 'Could not customise "#{$component}". oBrandCustomize expects a map of brand variables to customise variants. It is not possible to add or remove support for variants.';
 	}
 	// Update config.
 	$_o-brands: _oBrandRecursiveMapMerge($_o-brands, ($component: (oBrandGetCurrentBrand(): ('variables': $variables)))) !global;
