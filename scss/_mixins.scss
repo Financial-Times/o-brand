@@ -26,9 +26,9 @@
 	}
 	// Validate component.
 	$validated-component-name: _oBrandValidateName('Component', $component, 'Cannot customise component "#{$component}"');
-	$whitelabel-brand-config: _oBrandGetConfig($component, 'whitelabel');
-	@if type-of($whitelabel-brand-config) != 'map' {
-		@error 'Could not customise "#{$component}". Make sure that component supports the whitelabel brand.';
+	$existing-brand-config: _oBrandGetConfig($component, oBrandGetCurrentBrand());
+	@if type-of($existing-brand-config) != 'map' {
+		@error 'Could not customise brand "#{oBrandGetCurrentBrand()}" of the "#{$component}" component. Make sure that component supports the "#{oBrandGetCurrentBrand()}" brand.';
 	}
 	// Variables.
 	@if type-of($variables) != 'map' {
