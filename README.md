@@ -1,5 +1,11 @@
 # o-brand
 
+***
+
+**This component has moved to the [Origami Component System](https://github.com/Financial-Times/origami).**
+
+***
+
 Tools to tailor Origami components for distinct use cases.
 
 -  [Terms](#terms)
